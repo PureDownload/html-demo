@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // const token = 'token';
+        // wx.request({
+        //     url: '/aa',
+        //     method: 'get',
+                // headers: {token: token}, // 不用理
+        //     success: function() {},
+        //     fail: function() {}
+        // })
+        function fz(url, parameter) {
+
+            // 请求拦截
+            const obj = {};
+            const token = 'token';
+            obj.token = token;
+            obj.url = "http://127.0.0.1"+url;
+            new Promise((resolve, reject) => {
+                // 请求
+                setTimeout(() => {
+                    console.log('111');
+                    console.log(url, parameter);
+                    const data = {
+                        code: 200,
+                        data: {
+                            code: 200,
+                            data: {},
+                            message: '你有错'
+                        }
+                    }
+                    if(data.data.code != 200) {
+                        console.log('提示', data.data.message)
+                    }
+                    resolve(data.data.data)
+                }, 5000)
+            })
+        }
+        fz("/aa", {id: 'xxx'})
+        console.log(1)
+        console.log(2)
+        console.log(3)
+    </script>
+</body>
+</html>

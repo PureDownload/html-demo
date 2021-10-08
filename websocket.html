@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="id"/>
+    <button type="button" id="lj">连接</button>
+    <button type="button" id="send">发送</button>
+    <script src="./js/websocket.js"></script>
+    <script>
+        let inputEl = document.getElementById('id')
+        let ljEl = document.getElementById('lj')
+        let sendEl = document.getElementById('send')
+        ljEl.onclick = function() {
+            let uuid = inputEl.value
+            initWebsocket(uuid)
+        }
+        let obj = {
+            type: 'text',
+            message:null
+        }
+        sendEl.onclick = function() {
+            let message = inputEl.value
+            obj.message = message
+            sendMessage(JSON.stringify(obj))
+        }
+    </script>
+</body>
+</html>

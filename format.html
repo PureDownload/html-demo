@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>愿望树</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet-src.js"></script>
+    <script src="https://unpkg.com/leaflet-editable@latest/src/Leaflet.Editable.js"></script>
+    <script src="./js/LayerChinaProvider.js"></script>
+    <script src="./js//axios.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+        #map {
+            height: 100vh;
+            width: 100vw;
+        }
+        .icon {
+            transform: rotate(5deg);
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map', {
+            center: [23.021270, 113.121611],
+            editable: true
+        }).setView([23.021270, 113.121611], 15);
+
+        const bgLayer = null
+        const layer = null
+        loadSVGbj('http://127.0.0.1:5500/img/yws-bj.svg', bgLayer, map)
+        loadSVG('http://127.0.0.1:5500/img/yws-1.svg', layer, map)
+
+        function loadSVGbj(url, layer, map) {
+            layer && map.removeLayer(layer)
+            if (!url) {
+                return
+            }
+            layer = L.imageOverlay(url, [
+                [-200, 0],
+                [100, 800]
+            ]).addTo(map)
+            let zoom = map.fitBounds(layer.getBounds())
+            console.log(zoom, 'zoom')
+            setTimeout(function() {
+                // map.setZoom(zoom+1)
+            },400)
+        }
+
+        function loadSVG(url, layer, map) {
+            layer && map.removeLayer(layer)
+            if (!url) {
+                return
+            }
+            layer = L.imageOverlay(url, [
+                [60, 0],
+                [-80, 800]
+            ]).addTo(map)
+            // map.fitBounds(layer.getBounds())
+        }
+        map.on('click', function(e) {
+            console.log(e)
+        })
+        // 定义一个定位对象
+        let obj = [
+            {data: {userId: 'xxxxxxx', ywjy: '你很棒', sryw: '生日愿望'}, icon: {url: 'http://127.0.0.1:5500/img/ax/u8.svg', size: [24,24]}, latlng: [-1.9332268264771106, 316.66992187500006]},
+
+        ]
+        addMarker(obj[0], map);
+        // 添加marker方法 使用icon
+        function addMarker(data, map) {
+            // 定义一个icon对象
+            var myIcon = L.icon({
+                iconUrl: data.icon.url,
+                iconSize: data.icon.size,
+                className: 'icon'
+            });
+
+            L.marker(data.latlng, {icon: myIcon}).addTo(map);
+        }
+        // 点击事件 点击打开dialog
+
+    </script>
+</body>
+</html>

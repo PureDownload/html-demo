@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GetCenter</title>
+    <script src="./js/jquery.js"></script>
+</head>
+<body>
+    <script>
+        console.log('进来');
+        /**
+         * @params path:坐标点数组 二维数组 [[x,y],[x,y]]
+         * return 中心点坐标数组[x,y]
+         */
+        function getCenterPoint(path) {
+            var x = 0.0;
+            var y = 0.0;
+            for (var i = 0; i < path.length; i++) {
+                x = x + parseFloat(path[i][0]);
+                y = y + parseFloat(path[i][1]);
+            }
+            x = x / path.length;
+            y = y / path.length;
+            return [x,y]
+        }
+        let arr = []
+        let arr1 = []
+        $.getJSON('./json/fssdt.json',function(data) {
+            const json = data
+            console.log(json,'json');
+            json.features.forEach((geo) => {
+                const coordinates = geo.geometry.coordinates[0]
+                const properties = geo.properties
+                const center = getCenterPoint(coordinates)
+                // console.log(coordinates, properties,center);
+                const value = parseInt(Math.random() * 10000)
+                arr.push({code: properties['XZQDM'],name: properties.XZQMC,value: value})
+                arr1.push({code: properties['XZQDM'],visualMap: false,name: properties.XZQMC,value: [center[0],center[1],value]})
+            })
+            console.log(arr);
+            console.log(arr1);
+        })
+    </script>
+</body>
+</html>

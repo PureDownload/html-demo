@@ -1,0 +1,246 @@
+
+<html>
+    <head>
+        <script type="text/javascript" src="../echart4/echarts-geoCoordJson.js"></script>
+        <script type="text/javascript" src="../echart4/echarts.min.js"></script>
+        <script type="text/javascript" src="../echart4/echarts-gl.min.js"></script>
+        <script src="./js/jquery.js"></script>
+        <style>
+            #map {
+                width: 100%;
+                margin-bottom: 10px;
+                background-image: url("../echart4/ba5.jpg");
+            }
+        
+        </style>
+    </head>
+    <body>
+        <div class="easyui-layout" fit="true">
+    
+            <div region="center" border="true" data-options="region:'center',split:true"
+                 style="padding:0px;border:0px;height: 600px" split="true">
+                <div id="controlLineListtb" style="padding: 3px; height: 27px;border-bottom:1px solid #D7D7D7">
+                    <div align="right" class="searchColums">
+                        <label for="year" class="col-sm-2 control-label">年份: </label><input class="form-control Wdate"
+                                                                                            value="2020"
+                                                                                            onClick="WdatePicker({dateFmt:'yyyy'})"
+                                                                                            type="text" name="year"/>
+                        <a href="#" class="easyui-linkbutton" iconCls="icon-search" id="restlink">查询</a>
+        
+                    </div>
+                </div>
+               <!-- <%-- <input type="hidden" name="year"  value="2020" />--%> -->
+                <div id="map" style="height: 500px;">
+        
+                </div>
+                <div id="pros" style="height: 600px;">
+                    <table style="height: 100%;width: 100%">
+                        <tr>
+                            <td style="width: 50%"><div id="sage" style="height: 300px"></div></td>
+                            <td style="width: 50%"><div id="ssex" style="height: 300px"></div></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%"><div id="spolitical" style="height: 300px"></div></td>
+                            <td style="width: 50%"><div id="snation" style="height: 300px"></div></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        
+        
+        </div>
+        <script>
+            var myChart = echarts.init(document.getElementById('map'));
+            var sageChart = echarts.init(document.getElementById('sage'));
+            var ssexChart = echarts.init(document.getElementById('ssex'));
+            var spoliticalChart = echarts.init(document.getElementById('spolitical'));
+            var snationChart = echarts.init(document.getElementById('snation'));
+            $(document).ready(function () {
+                //给时间控件加上样式
+                $(document).on('click', '.easyui-linkbutton', function () {
+                    initMap()
+                   
+                })
+                initMap();
+                
+            });
+            
+            function initMap(){
+                // 放入数据
+                $.getJSON('../echart4/map2/province/foshan.json', function (json) {
+                    console.log(json,'json')
+                    console.log(getAllContent(json))
+                    echarts.registerMap("440600", json);
+                    renderMap([{
+                        name: '禅城区',
+                        value: [...getContent('禅城区',json), 3000]
+                    },{
+                        name: '三水区',
+                        value: [...getContent('三水区',json), 3000]
+                    }])
+                    // var year =   $("input[name='year']").val();
+                    // var url = "statisticController.do?listStudentByCity&year="+year;
+                    // $.getJSON(url, function (data) {
+                    //     renderMap(data);
+                    // });
+        
+                });
+            }
+        
+        
+            var convertData = function(data) {
+                var res = [];
+                for (var i = 0; i < data.length; i++) {
+                    var geoCoord = geoCoordMap[data[i].name];
+                    if (geoCoord) {
+                        res.push({
+                            name: data[i].name,
+                            value: geoCoord.concat(data[i].value)
+                        });
+                    }
+                }
+                return res;
+            };
+            var getContent = function(name, json) {
+                const features = json.features
+                let content = []
+                for(let i = 0;i<features.length;i++) {
+                    let properties = features[i].properties
+                    if(properties.name == name) {
+                        content = properties.center
+                        break
+                    }
+                }
+                return content
+            }
+            var getAllContent = function(json) {
+                const features = json.features
+                let obj = {}
+                for(let i = 0;i<features.length;i++) {
+                    let properties = features[i].properties
+                    obj[properties.name] = properties.center
+                }
+                return obj
+            }
+            // 渲染地图
+            function  renderMap(data){
+                var option = {
+                    animationDuration:1000,
+                    animationEasing:'cubicOut',
+                    animationDurationUpdate:1000
+                };
+                // option.color =  ['#ffffff', '#434348', '#90ed7d', '#f7a35c', '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'],
+                option.series = [{
+                    name: '人数',
+                    type: "bar3D",
+                    coordinateSystem: 'geo3D',// 使用的坐标系
+                    barSize: 3, //柱子粗细
+                    shading: 'color', // 手动改变柱子颜色需要将该属性改为color 
+                    opacity: 1,
+                    bevelSize: 0.3,
+                    lambertMaterial: {
+
+                    },
+                    bevelSmoothness: 1000,
+                    itemStyle: {
+                        color: '#fcff62'
+                    },
+                    // todo 修改数据属性
+                    data:data,
+                }]
+        
+        
+                option.geo3D = {
+                 /*   boxHeight: 10,*/
+                    /*  boxWidth: 110,*/
+                    map: "440600",
+                    roam: true,
+                    itemStyle: {
+                        color: '#ffffff',
+                        opacity: 1,
+                        borderWidth: 0.6,
+                        borderColor: '#FFFFFF'
+                    },
+                    label: {
+                        show: true,
+                        textStyle: {
+                            color: '#fcff62', //地图初始化区域字体颜色
+                            fontSize: 8,
+                            opacity: 1,
+                            backgroundColor: 'rgba(0,23,11,0)'
+                        },
+                    },
+                    emphasis: { //当鼠标放上去  地区区域是否显示名称
+                        label: {
+                            show: true,
+                            textStyle: {
+                                color: '#fff',
+                                fontSize: 8,
+                                backgroundColor: 'rgba(0,23,11,0)'
+                            }
+                        }
+                    },
+                    shading: 'lambert',
+                    light: { //光照阴影
+                        main: {
+                            color: '#1e1e1e', //光照颜色
+                            intensity: 1.0, //光照强度
+                            //  shadowQuality: 'high', //阴影亮度
+                            shadow: true, //是否显示阴影
+                            alpha: 55,
+                            beta: 10,
+                            opacity: 0.1
+                        },
+                        ambient: {
+                            intensity: 0.3
+                        }
+                    },
+                    viewControl: {
+                        rotateSensitivity: 3, //鼠标旋转灵敏度，设置为0后无法旋转。
+                        zoomSensitivity: 0,//鼠标缩放灵敏度
+                        autoRotate: true,//自动旋转
+                        autoRotateAfterStill: 1,//鼠标停止后多久恢复旋转(为0时暂停后不恢复旋转)
+                        maxBeta: Infinity,
+                        minBeta: -Infinity
+                        //alpha:160,//视角绕 x 轴，即上下旋转的角度
+                        // beta:100,//视角绕 y 轴，即左右旋转的角度。
+                        // targetCoord: [116.46, 39.92]//定位到哪里
+                    }
+                }
+                
+
+                // option.globe =  {
+                //     show: true,
+                //     // baseTexture: texture,
+                //     shading: 'color',
+                //     // light: {
+                //     //   ambient: {
+                //     //     intensity: 0.5
+                //     //   },
+                //     //   main: {
+                //     //     intensity: 0.6
+                //     //   }
+                //     // },
+                //     //视角控制
+                //     viewControl: {
+                //         rotateSensitivity: 3, //鼠标旋转灵敏度，设置为0后无法旋转。
+                //         zoomSensitivity: 0,//鼠标缩放灵敏度
+                //         autoRotate: true,//自动旋转
+                //         autoRotateAfterStill: 1,//鼠标停止后多久恢复旋转(为0时暂停后不恢复旋转)
+                //         //alpha:160,//视角绕 x 轴，即上下旋转的角度
+                //         //beta:-20,//视角绕 y 轴，即左右旋转的角度。
+                //         targetCoord: [116.46, 39.92]//定位到哪里
+                //     }
+                // }
+
+                if(!!myChart){
+                    myChart.dispose();
+                }
+                myChart = echarts.init(document.getElementById('map'));
+                //渲染地图
+                myChart.setOption(option);
+        
+            }
+        </script>
+    </body>
+</html>

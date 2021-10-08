@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchartsBy3D</title>
+    <script src="./js/echarts.min.js"></script>
+    <script src="./js/jquery.js"></script>
+</head>
+
+<body>
+    <div id="main" style="height:1000px;width:1000px;"></div>
+    <script>
+        // 根据最小值，最大值，区间数来获取范围区间
+        function layeredInterval(min, max, tier) {
+        // 向上取整获取最大值整数
+        const maxNum = Math.ceil(max / 10) * 10
+        // 获取范围总数
+        const total = maxNum - min
+        // 总数/间隔数获取每个区间的数值
+        const lot = Number((total / tier).toFixed(0))
+        const arr = []
+        // 每次加的数值，从最小值开始算起
+        let count = min
+        // tier -1 , 不保存最后一个。保证数值完整性
+        for (let i = 0; i < tier - 1; i++) {
+            const num = Number((count + lot).toFixed(0))
+            const item = [count, num]
+            count = num
+            arr.push(item)
+        }
+        arr.push([count, maxNum])
+        return arr
+        }
+
+        //* https://www.makeapie.com/editor.html?c=xr1Ilwr5PO 有setInterval，可以设置高亮
+        /**
+            此版本通过设置geoindex && seriesIndex: [1] 属性来实现geo和map共存，来达到hover散点和区域显示tooltip的效果
+
+            默认情况下，map series 会自己生成内部专用的 geo 组件。但是也可以用这个 geoIndex 指定一个 geo 组件。这样的话，map 和 其他 series（例如散点图）就可以共享一个 geo 组件了。并且，geo 组件的颜色也可以被这个 map series 控制，从而用 visualMap 来更改。
+            当设定了 geoIndex 后，series-map.map 属性，以及 series-map.itemStyle 等样式配置不再起作用，而是采用 geo 中的相应属性。
+
+            http://echarts.baidu.com/option.html#series-map.geoIndex
+
+            并且加了pin气泡图标以示数值大小
+            */
+        console.log(echarts);
+        const mainEl = document.getElementById('main') //* 获取echarts的dom对象
+        const myChart = echarts.init(mainEl) //* 获取echarts对象
+        // const resourcesBaseUrl = 'https://www.makeapie.com/asset/get/s/' //* 资源文件下载网站
+        const resourcesBaseUrl = './json/'
+        const resoucesImgUrl = 'image://./png/'
+        var fssdtc = resourcesBaseUrl + 'fssdtc.geojson'
+        var fssdt = resourcesBaseUrl + 'fssdt.json'
+        var fs = resourcesBaseUrl + '440600_full.json'
+        var bd = resourcesBaseUrl + 'data-1618898514270-IsqqHGtbY.json'
+        var fp = resourcesBaseUrl + 'data-1618899525486-wkO5rxyAM.json'
+        var ly = resourcesBaseUrl + 'data-1618899757492-WnGtLt6Yk.json'
+        var yx = resourcesBaseUrl + 'data-1618906123836-ahRSeBbEE.json'
+        var dz = resourcesBaseUrl + 'data-1618906432180-c93kCPvh8.json'
+        var qy = resourcesBaseUrl + 'data-1618911164355-PhByrCUVp.json'
+        var tx = resourcesBaseUrl + 'data-1618911169152-Mftb_e2Yd.json'
+        var mapname = fssdt
+        var mapJson = [
+            {
+                name: '阜平县',
+                json: fp,
+            },
+            {
+                name: '涞源县',
+                json: ly,
+            },
+            {
+                name: '易县',
+                json: ly,
+            },
+            {
+                name: '定州市',
+                json: dz,
+            },
+            {
+                name: '曲阳县',
+                json: qy,
+            },
+            {
+                name: '唐县',
+                json: tx,
+            },
+        ];
+        const originMapData = [
+            {
+                name: '阜平县',
+                value: [114.198801, 38.847276],
+                datas: 1354,
+                img: resoucesImgUrl + 'data-1619059442567-s5l7-f8Eu9.png',
+            },
+            {
+                name: '涞源县',
+                value: [114.723966, 39.292095],
+                datas: 1402,
+                img: resoucesImgUrl + 'data-1619059442567-s5l7-f8Eu9.png',
+            },
+            {
+                name: '易县',
+                value: [115.245576, 39.311674],
+                datas: 2468,
+                img: resoucesImgUrl + 'data-1619059838735-QE9mBZmhh.png',
+            },
+            {
+                name: '定州市',
+                value: [115.050014, 38.460198],
+                datas: 768,
+                img: resoucesImgUrl + 'data-1619321685306-EvjlgDOXi.png',
+            },
+            {
+                name: '曲阳县',
+                value: [114.654083, 38.700813],
+                datas: 589,
+                img: resoucesImgUrl + 'data-1619059838735-QE9mBZmhh.png',
+            },
+            {
+                name: '唐县',
+                value: [114.798254, 38.898656],
+                datas: 1500,
+                img: resoucesImgUrl + 'data-1619321685306-EvjlgDOXi.png',
+            },
+        ]
+        var mapDate = []
+        mapDate = originMapData
+        var mapBaseData = [
+            {
+                name: '阜平县',
+                value: 1354,
+                datas: 1354,
+                img: resoucesImgUrl + 'data-1619059442567-s5l7-f8Eu9.png',
+            },
+            {
+                name: '涞源县',
+                value: 1402,
+                datas: 1402,
+                img: resoucesImgUrl + 'data-1619059442567-s5l7-f8Eu9.png',
+            },
+            {
+                name: '易县',
+                value: 2468,
+                datas: 2468,
+                img: resoucesImgUrl + 'data-1619059838735-QE9mBZmhh.png',
+            },
+            {
+                name: '定州市',
+                value: 768,
+                datas: 768,
+                img: resoucesImgUrl + 'data-1619321685306-EvjlgDOXi.png',
+            },
+            {
+                name: '曲阳县',
+                value: 589,
+                datas: 589,
+                img: resoucesImgUrl + 'data-1619059838735-QE9mBZmhh.png',
+            },
+            {
+                name: '唐县',
+                value: 1500,
+                datas: 1500,
+                img: resoucesImgUrl + 'data-1619321685306-EvjlgDOXi.png',
+            },
+        ]
+        const numArr = layeredInterval(0,5000,5)
+        // 获取侧边范围栏样式
+        const pieces = [
+            {
+            gte: numArr[4][0],
+            lte: numArr[4][1],
+            label: `${numArr[4][0]} - ${numArr[4][1]}`,
+            color: '#7e2616'
+            },
+            {
+            gte: numArr[3][0],
+            lt: numArr[3][1],
+            label: `${numArr[3][0]} - ${numArr[3][1]}`,
+            color: '#af4c42'
+            },
+            {
+            gte: numArr[2][0],
+            lt: numArr[2][1],
+            label: `${numArr[2][0]} - ${numArr[2][1]}`,
+            color: '#cf5f49'
+            },
+            {
+            gte: numArr[1][0],
+            lt: numArr[1][1],
+            label: `${numArr[1][0]} - ${numArr[1][1]}`,
+            color: '#e9823d'
+            },
+            {
+            gte: numArr[0][0],
+            lt: numArr[0][1],
+            label: `${numArr[0][0]} - ${numArr[0][1]}`,
+            color: '#f9c548'
+            }
+        ]
+        
+        var domImg = document.createElement('img');
+        domImg.style.height = domImg.style.width = '8px';
+        domImg.width = '8'
+        domImg.height = '8'
+        domImg.src =
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAIAAAAmKNuZAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQ4IDc5LjE2NDAzNiwgMjAxOS8wOC8xMy0wMTowNjo1NyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDIxLjAgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkE4MTE0OTgyQTdDQzExRUI4Q0RBRkMwQkFGMTY2NDhEIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkE4MTE0OTgzQTdDQzExRUI4Q0RBRkMwQkFGMTY2NDhEIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QTgxMTQ5ODBBN0NDMTFFQjhDREFGQzBCQUYxNjY0OEQiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QTgxMTQ5ODFBN0NDMTFFQjhDREFGQzBCQUYxNjY0OEQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4v4trwAAAAVklEQVR42mL0D225cu0hAzWAjpY8C9CsL19/wIV4uDnI5gKNYmKgKhjcxrFAggBZiBIuyDhqRQWQOxoVo1ExGhWjUTEaFYMiKoB1LVq1TXZUAI0CCDAAcAlaxCt7dtQAAAAASUVORK5CYII=';
+        console.log(domImg);
+        var domImgHover = document.createElement('img')
+        domImgHover.style.height = domImgHover.style.width = '8px'
+        domImgHover.height = domImgHover.width = '8'
+        domImgHover.src =
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAIAAAAmKNuZAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQ4IDc5LjE2NDAzNiwgMjAxOS8wOC8xMy0wMTowNjo1NyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDIxLjAgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkFDQ0Q2RjYyQTdDRDExRUI4ODUxRDIxRjkzMEExNzg2IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFDQ0Q2RjYzQTdDRDExRUI4ODUxRDIxRjkzMEExNzg2Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUNDRDZGNjBBN0NEMTFFQjg4NTFEMjFGOTMwQTE3ODYiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QUNDRDZGNjFBN0NEMTFFQjg4NTFEMjFGOTMwQTE3ODYiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6FboimAAAASklEQVR42mIUnL9XtHsDAzXA69IARjWtXJYX7+FCfyQEKeEyMVAVDG7jWCB+RhaihAsybjQqRqNiNCpGo2I0KoZZVDBSt9oGCDAAhYNrvRu3DWEAAAAASUVORK5CYII=';
+
+        var img2 = resoucesImgUrl + 'data-1619318279159-o6ZbTGoO0.png'
+        let index = -1
+        myChart.showLoading('default', {
+            text: '统计中，请稍候...',
+            maskColor: '#2957A2',
+            textColor: '#fff',
+        })
+        myChart.on('click', function (e) {
+            console.log(e,'eByclick');
+            // 找到点击的json 初始化mapData和mapName
+            var chooseName = mapJson.filter((item) => {
+                return item.name == e.name
+            })
+            console.log(myChart.convertFromPixel('geo', [e.event.offsetX, e.event.offsetY]));
+            mapname = chooseName[0].json
+            mapDate = [];
+            $('<div class="back">〈 返回</div>').appendTo($('#main'))
+
+            $('.back').css({
+                position: 'absolute',
+                left: '17px',
+                top: '25px',
+                color: 'rgb(222,222,222)',
+                'font-size': '12px',
+                cursor: 'pointer',
+                border: '1px solid rgba(255, 255, 255, .5)',
+                padding: '0px 6px 1px 0px',
+                'border-radius': '3px',
+                'z-index': '100',
+            })
+            $('.back').click(function () {
+                // 返回一级 该案例只有一二级
+                mapname = bd;
+                mapDate = originMapData
+                $('.back').css({
+                    position: 'absolute',
+                    left: '17px',
+                    top: '-25px',
+                    color: 'rgb(222,222,222)',
+                    'font-size': '15px',
+                    cursor: 'pointer',
+                    'z-index': '100',
+                })
+
+                mapInit()
+            })
+            mapInit()
+        });
+        setTimeout(function () {
+            mapInit()
+        }, 1000)
+        $.getJSON(fs,function (data ) {
+            console.log(data, 'data');
+            echarts.registerMap('fs', data)
+        })
+        var mapInit = () => {
+            $.getJSON(mapname, function (geoJson) {
+                echarts.registerMap('bd', geoJson);
+                
+                myChart.hideLoading();
+                const mapZoom = 1.22
+                const areaColorByBottom = '#143365'
+                option = {
+                    backgroundColor: '#2957A2', //*背景颜色
+                    // title: { //* 标题配置相关
+                    //     top: 20,
+                    //     text: '河北省 - 保定市',
+                    //     subtext: '',
+                    //     x: 'center',
+                    //     textStyle: {
+                    //         color: '#fff',
+                    //         fontWeight: 100,
+                    //         fontSize: 14,
+                    //     },
+                    // },
+                    // visualMap: {
+                    //     type: 'piecewise',
+                    //     min: 0,
+                    //     max: 60000,
+                    //     top: 'middle',
+                    //     // text: ['高', '低'],
+                    //     textStyle: {
+                    //         color: '#ffffff',
+                    //         fontSize: 16
+                    //     },
+                    //     pieces,
+                    //     // 取消选择图例
+                    //     // 地图颜色
+                    //     target: {
+                    //         outOfRange: {
+                    //             color: '#eeeeee'
+                    //         }
+                    //     },
+                    //     // 表示 visualMap-piecewise 本身的视觉样式。
+                    //     // legend颜色
+                    //     controller: {
+                    //         outOfRange: {
+                    //             color: '#757575'
+                    //         }
+                    //     }
+                    // },
+                    geo: [{
+                        map: 'fs',
+                        aspectScale: 0.75,//* 地图长宽比
+                        layoutCenter: ['50.4%', '51%'],//* 设置地图布局
+                        layoutSize: '100%',
+                        silent: true, //* 是否不响应和触发地图事件
+                        roam: false, //* 是否开启缩放和平移
+                        // z: 0,
+                        // zoom: 0.86,
+                        itemStyle: { // 设置地图样式
+                            normal: {
+                                areaColor: areaColorByBottom,
+                                shadowColor: 'rgba(0, 0, 0, 1)',
+                                shadowBlur: 0,
+                                shadowOffsetX: 0,
+                                shadowOffsetY: 0,
+                                borderColor: '#2ab8ff',
+                                borderWidth: 1,
+                            },
+                            emphasis: {
+                                areaColor: areaColorByBottom,
+                                borderWidth: 1,
+                                shadowBlur: 0,
+                                shadowOffsetX: 0,
+                                shadowOffsetY: 0,
+                                color: '#2ab8ff',
+                                label: {
+                                    show: false,
+                                },
+                            },
+                        },
+                    },
+                    // {
+                    //     map: 'fs',
+                    //     aspectScale: 0.75,//* 地图长宽比
+                    //     // layoutCenter: ['50%', '50.5%'],//* 设置地图布局
+                    //     layoutSize: '100%',
+                    //     silent: true, //* 是否不响应和触发地图事件
+                    //     roam: false, //* 是否开启缩放和平移
+                    //     // z: 0,
+                    //     zoom: mapZoom,
+                    //     itemStyle: { // 设置地图样式
+                    //         normal: {
+                    //             areaColor: areaColorByBottom,
+                    //             shadowColor: 'rgba(0, 0, 0, 1)',
+                    //             shadowBlur: 0,
+                    //             shadowOffsetX: 0,
+                    //             shadowOffsetY: 0,
+                    //             borderColor: '#2ab8ff',
+                    //             borderWidth: 4,
+                    //         },
+                    //         emphasis: {
+                    //             areaColor: areaColorByBottom,
+                    //             borderWidth: 1,
+                    //             shadowBlur: 0,
+                    //             shadowOffsetX: 0,
+                    //             shadowOffsetY: 0,
+                    //             color: '#2ab8ff',
+                    //             label: {
+                    //                 show: false,
+                    //             },
+                    //         },
+                    //     },
+                        // itemStyle: {
+                        //     normal: {
+                        //         borderColor: '#2ab8ff',
+                        //         borderWidth: 1,
+                        //         areaColor: {
+                        //             image: domImg,
+                        //             repeat: 'repeat',
+                        //         },
+                        //         shadowColor: 'rgba(0, 0, 0, 0.5)',
+                        //         shadowBlur: 10,
+                        //         shadowOffsetX: 5,
+                        //         shadowOffsetY: 0,
+                        //     },
+                        //     emphasis: {
+                        //         areaColor: {
+                        //             image: domImgHover,
+                        //             repeat: 'repeat',
+                        //         },
+                        //         borderColor: '#2ab8ff',
+                        //         borderWidth: 1,
+                        //         shadowColor: 'rgba(0, 255, 255, 0.7)',
+                        //         shadowBlur: 15,
+                        //         shadowOffsetX: 5,
+                        //         shadowOffsetY: 0,
+                        //         label: {
+                        //             show: false,
+                        //         },
+                        //     },
+                        // },
+                    // },
+                    ],
+                    series: [
+                        {
+                            type: 'map',
+                            label: {
+                                normal: {
+                                    show: false,
+                                    textStyle: {
+                                        color: '#fff',
+                                    },
+                                },
+                                emphasis: {
+                                    textStyle: {
+                                        color: '#fff',
+                                    },
+                                },
+                            },
+                            data: mapBaseData,
+                            select: { //* 选中状态下的效果
+                                itemStyle: {
+                                    // areaColor: {
+                                    //     image: domImgHover,
+                                    //     repeat: 'repeat',
+                                    // },
+                                    areaColor: 'rgba(1,80,231,.5)',
+                                    borderColor: '#2ab8ff',
+                                    borderWidth: 1,
+                                    shadowColor: 'rgba(0, 255, 255, 0.7)',
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowOffsetY: 0,
+                                    label: {
+                                        show: false,
+                                    },
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    borderColor: '#1684f3',
+                                    borderWidth: 1,
+                                    // areaColor: {
+                                    //     image: domImg,
+                                    //     repeat: 'repeat',
+                                    // },
+                                    areaColor: 'rgba(1,80,231,.5)',
+                                    shadowColor: 'rgba(0, 0, 0, 15)',
+                                    shadowBlur: 0,
+                                    shadowOffsetX: 0,
+                                    shadowOffsetY: 0,
+                                },
+                                emphasis: {
+                                    // areaColor: {
+                                        // image: domImgHover,
+                                        // repeat: 'repeat',
+                                    // },
+                                    areaColor: 'rgba(1,80,231,.5)',
+                                    borderColor: '#2ab8ff',
+                                    borderWidth: 1,
+                                    shadowColor: 'rgba(0, 255, 255, 0.7)',
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowOffsetY: 0,
+                                    label: {
+                                        show: false,
+                                    },
+                                },
+                            },
+                            zoom: mapZoom,
+                            roam: false,
+                            // geoIndex: 0,
+                            map: 'bd',
+                        },
+                        {
+                            tooltip: {
+                                show: false,
+                            },
+                            type: 'effectScatter',
+                            coordinateSystem: 'geo',
+                            rippleEffect: {
+                                scale: 10,
+                                brushType: 'stroke',
+                            },
+                            geoIndex: 0,
+                            showEffectOn: 'render',
+                            itemStyle: {
+                                normal: {
+                                    shadowColor: '#0ff',
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowOffsetY: 0,
+                                    color: function (params) {
+                                        var colorList = [
+                                            new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                                                {
+                                                    offset: 0,
+                                                    color: '#64fbc5',
+                                                },
+                                                {
+                                                    offset: 1,
+                                                    color: '#018ace',
+                                                },
+                                            ]),
+                                            new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                                                {
+                                                    offset: 0,
+                                                    color: '#64fbc5',
+                                                },
+                                                {
+                                                    offset: 1,
+                                                    color: '#018ace',
+                                                },
+                                            ]),
+                                            new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                                                {
+                                                    offset: 0,
+                                                    color: '#168e6d',
+                                                },
+                                                {
+                                                    offset: 1,
+                                                    color: '#c78d7b',
+                                                },
+                                            ]),
+                                            new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                                                {
+                                                    offset: 0,
+                                                    color: '#61c0f1',
+                                                },
+                                                {
+                                                    offset: 1,
+                                                    color: '#6f2eb6',
+                                                },
+                                            ]),
+                                            new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                                                {
+                                                    offset: 0,
+                                                    color: '#168e6d',
+                                                },
+                                                {
+                                                    offset: 1,
+                                                    color: '#c78d7b',
+                                                },
+                                            ]),
+                                            new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                                                {
+                                                    offset: 0,
+                                                    color: '#61c0f1',
+                                                },
+                                                {
+                                                    offset: 1,
+                                                    color: '#6f2eb6',
+                                                },
+                                            ]),
+                                        ];
+                                        return colorList[params.dataIndex];
+                                    },
+                                },
+                            },
+                            label: {
+                                normal: {
+                                    color: '#fff',
+                                },
+                            },
+                            symbol: 'circle',
+                            symbolSize: [10, 5],
+                            data: mapDate,
+                            zlevel: 1,
+                        },
+                        {
+                            type: 'scatter',
+                            coordinateSystem: 'geo',
+                            itemStyle: {
+                                color: '#f00',
+                            },
+                            symbol: function (value, params) {
+                                return params.data.img;
+                            },
+                            symbolSize: [32, 41],
+                            symbolOffset: [0, -20],
+                            z: 9999,
+                            data: mapDate,
+                            geoIndex: 0,
+                        },
+                        {
+                            type: 'scatter',
+                            coordinateSystem: 'geo',
+                            geoIndex: 0,
+                            label: {
+                                normal: {
+                                    show: true,
+                                    formatter: function (params) {
+                                        var name = params.name;
+                                        var value = params.data.datas;
+                                        var text = `{fline|${value}}\n{tline|${name}}`;
+                                        console.log(text);
+                                        return text;
+                                    },
+                                    color: '#fff',
+                                    rich: {
+                                        fline: {
+                                            padding: [0, 25],
+                                            color: '#fff',
+                                            textShadowColor: '#030615',
+                                            textShadowBlur: '0',
+                                            textShadowOffsetX: 1,
+                                            textShadowOffsetY: 1,
+                                            fontSize: 14,
+                                            fontWeight: 400,
+                                        },
+                                        tline: {
+                                            padding: [0, 27],
+                                            color: '#ABF8FF',
+                                            fontSize: 12,
+                                        },
+                                    },
+                                },
+                                emphasis: {
+                                    show: true,
+                                },
+                            },
+                            itemStyle: {
+                                color: '#00FFF6',
+                            },
+                            symbol: img2,
+                            symbolSize: [100, 50],
+                            symbolOffset: [0, -60],
+                            z: 999,
+                            data: mapDate,
+                        },
+                    ],
+                }
+                myChart.setOption(option)
+            })
+        }
+        // 订单 表单 工单
+        // 订单 
+        // 表单
+        // 工单
+    </script>
+</body>
+
+</html>

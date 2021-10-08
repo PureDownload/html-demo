@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cereals</title>
+    <link rel="stylesheet" href="./css/cereals.css">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- import Vue before Element -->
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+
+<body>
+    <div id="bg"></div>
+    <div class="carousel-wrap" id="app">
+        <div class="carousel card">
+            <el-carousel trigger="click" :autoplay="true" class="el-carousel">
+                <el-carousel-item>
+                  <img src="./img/bg1.png" />
+                </el-carousel-item>
+                <el-carousel-item>
+                    <img src="./img/bg2.png" />
+                  </el-carousel-item>
+                  <el-carousel-item>
+                    <img src="./img/bg3.png" />
+                  </el-carousel-item>
+                  <el-carousel-item>
+                    <img src="./img/bg4.png" />
+                  </el-carousel-item>
+              </el-carousel>
+        </div>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data: function () {
+                return { visible: false }
+            }
+        })
+    </script>
+</body>
+
+</html>

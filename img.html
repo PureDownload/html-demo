@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <title>Document</title>
+</head>
+<body>
+    <img src="" id="img" />
+    <canvas id="as" />
+    <script>
+        const asEl = document.getElementById('as')
+        const imgEl = document.getElementById('img')
+
+        var ctx=asEl.getContext("2d");
+        ctx.fillStyle="#FF0000";
+        ctx.fillRect(0,0,150,75);
+
+        // Converts canvas to an image
+        function convertCanvasToImage(canvas) {
+            var image = new Image();
+            image.src = canvas.toDataURL("image/png");
+            return image;
+        }
+
+        // Converts image to canvas; returns new canvas element
+        function convertImageToCanvas(image) {
+            var canvas = document.createElement("canvas");
+            canvas.width = image.width;
+            canvas.height = image.height;
+            canvas.getContext("2d").drawImage(image, 0, 0);
+
+            return canvas;
+        }
+        imgEl.src = asEl.toDataURL("image/png");
+    </script>
+</body>
+</html>

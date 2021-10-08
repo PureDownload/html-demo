@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script crossorigin="anonymous" integrity="sha512-WNLxfP/8cVYL9sj8Jnp6et0BkubLP31jhTG9vhL/F5uEZmg5wEzKoXp1kJslzPQWwPT1eyMiSxlKCgzHLOTOTQ==" src="https://lib.baomitu.com/jquery/3.5.1/jquery.js"></script>
+</head>
+
+<body>
+    <input type="file" id="file" name="file" multiple>
+    <script>
+        let fileEl = document.getElementById('file')
+        fileEl.onchange = function (e) {
+            uploadFile(e)
+        }
+        function uploadFile(event) {//上传文件
+            const _this = this;
+            let formData = new FormData();
+            let _file = event.target.files;
+            for(let i = 0;i<_file.length;i++) {
+                formData.append('file', _file[i], _file[i].name);
+            }
+            $.ajax({
+                type: "POST",
+                url: "http://127.0.0.1:8080/file/upload",
+                data: formData,
+                contentType: "application/json",
+                processData: false,
+                contentType: false,
+                async: true,
+                success: function (data) {
+                    console.log(data)
+
+                },
+                error: function (data) {
+                    console.log(data)
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

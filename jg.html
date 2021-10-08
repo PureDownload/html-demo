@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <title>机构</title>
+    <link type="text/css" rel="stylesheet" href="./css/AddressList.css"/>
+    <script type="text/javascript" src="./js//vue.min.js"></script>
+    <script type="text/javascript" src="./js/axios.min.js"></script>
+    <script src="./js/element-index.js"></script>
+    <link rel="stylesheet" href="./css/element-index.css">
+    <style type="text/css">
+        .rectClass {
+            cursor: pointer;
+            border: 2px solid #CCCCCC;
+            border-radius: 10px;
+            height: 100%;
+            width: 30%;
+            float: left;
+        }
+    </style>
+
+    <link rel="shortcut icon" href="favicon.ico">
+</head>
+
+<body>
+<div class="mainWarp">
+
+    <div class="mainDetial">
+        <div class="content" id="app">
+            <div class="index" v-show="action==1">
+                <div class="cadre-user margin-bottom">
+                    <el-card class="box-card">
+                        <div slot="header" class="clearfix">
+                            <span>本部成员</span>
+                        </div>
+                        <div class="item-wrap">
+                            <el-card v-for="cy in bbcy" :key="cy.id">
+                                <div class="item" @click="openUserInfo(cy)">
+                                    <div class="manual-logo">
+                                        <svg t="1614157974375" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                             xmlns="http://www.w3.org/2000/svg" p-id="2117" width="32" height="32">
+                                            <path
+                                                    d="M504.951 511.98c93.49 0 169.28-74.002 169.28-165.26 0-91.276-75.79-165.248-169.28-165.248-93.486 0-169.287 73.972-169.279 165.248-0.001 91.258 75.793 165.26 169.28 165.26z m77.6 55.098H441.466c-120.767 0-218.678 95.564-218.678 213.45V794.3c0 48.183 97.911 48.229 218.678 48.229H582.55c120.754 0 218.66-1.78 218.66-48.229v-13.77c0-117.887-97.898-213.45-218.66-213.45z"
+                                                    p-id="2118"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="info">
+                                        <div class="name">{{cy.XM}}</div>
+                                        <div class="position">{{cy.ZW}}</div>
+                                    </div>
+                                </div>
+                            </el-card>
+                        </div>
+                    </el-card>
+                </div>
+                <div class="department margin-bottom">
+                    <el-card class="box-card">
+                        <div slot="header" class="clearfix">
+                            <span>机关处室</span>
+                        </div>
+                        <div class="item-wrap">
+                            <el-card v-for="cs in cslb" :key="cs.id">
+                                <div class="item" @click="openCSUserList(cs)">
+                                    <div class="manual-logo">
+                                        <svg t="1614158273659" class="icon" viewBox="0 0 1060 1024" version="1.1"
+                                             xmlns="http://www.w3.org/2000/svg" p-id="3014" width="32" height="32">
+                                            <path
+                                                    d="M35.426689 561.597364a35.426689 35.426689 0 0 1-25.023614-60.450302L501.147062 10.403075a35.426689 35.426689 0 0 1 49.934761 50.047227L60.450302 551.081823a35.25799 35.25799 0 0 1-25.023613 10.515541z"
+                                                    p-id="3015"></path>
+                                            <path
+                                                    d="M1025.462054 567.276881A35.426689 35.426689 0 0 1 1000.382208 556.705107L509.638221 66.129819a35.426689 35.426689 0 0 1 50.103459-50.10346l490.743987 490.80022a35.426689 35.426689 0 0 1-25.023613 60.450302zM822.855135 1024h-584.821527A103.018561 103.018561 0 0 1 134.958814 921.093904v-404.876441a35.426689 35.426689 0 0 1 70.853377 0v404.876441a32.108951 32.108951 0 0 0 32.052718 32.052719h584.821527a32.108951 32.108951 0 0 0 32.052718-32.052719v-404.876441a35.426689 35.426689 0 1 1 70.853378 0v404.876441a103.018561 103.018561 0 0 1-102.737397 102.906096z"
+                                                    p-id="3016"></path>
+                                            <path
+                                                    d="M737.156288 1007.130148h-118.088962a46.729489 46.729489 0 0 1-46.673257-46.673256v-354.266887a46.729489 46.729489 0 0 1 46.673257-46.673256h118.088962a46.729489 46.729489 0 0 1 46.673256 46.673256v354.266887a46.729489 46.729489 0 0 1-46.673256 46.673256z m-93.908842-70.853377h69.728721v-305.906645h-69.728721z"
+                                                    p-id="3017"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="name">
+                                        {{cs.jgmc}}
+                                    </div>
+                                </div>
+                            </el-card>
+                        </div>
+                    </el-card>
+                </div>
+                <div class="lower-institutions">
+                    <el-card class="box-card">
+                        <div slot="header" class="clearfix">
+                            <span>下级机构</span>
+                        </div>
+                        <el-tree :data="treeData" default-expand-all :props="treeProps" @node-click="openJGUserList">
+                        <span slot-scope="{ node, data }" class="custom-tree-node">
+                            <img v-if="data.JGXZDM == 91" src="./img/mhzddw.png" class="manual-logo" alt/>
+                            <img v-else src="./img/dd.png" class="manual-logo" alt/>
+                            <span>{{data.JGJC}}</span>
+                        </span>
+                        </el-tree>
+                    </el-card>
+                </div>
+            </div>
+            <div class="user-list" v-show="action==2">
+                <el-card class="box-card">
+                    <div slot="header" class="clearfix">
+                    <span class="header-text"><span class="back" @click="action = 1">
+                            <svg t="1614158315475" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                 xmlns="http://www.w3.org/2000/svg" p-id="3773" width="16" height="16">
+                                <path
+                                        d="M452.374515 11.767909 19.109121 449.094941c-0.646986 0.646986-0.862649 1.509636-1.401804 2.156622-0.107831 0.107831-0.431325 0.215662-0.539156 0.323493-15.419849 15.527679-15.312018 40.652328 0.215662 56.072177l437.255145 433.265394c15.527679 15.419849 40.544497 15.312018 55.964345-0.215662 7.584121-7.691953 11.430098-17.86402 11.430098-27.928257 0-10.172068-3.953807-20.416023-11.753591-28.14392L100.952933 478.964158l407.60159-411.447566c7.584121-7.691953 11.430098-17.756189 11.430098-27.928257 0-10.279899-3.953807-20.416023-11.753591-28.14392C492.919012-3.975433 467.794364-3.759771 452.374515 11.767909L452.374515 11.767909z"
+                                        p-id="3774"></path>
+                            </svg>
+                        </span>
+                        <span>{{ryListJG && (ryListJG.jgmc || ryListJG. JGJC)}}</span>
+                    </span>
+                    </div>
+                    <div class="item-wrap">
+                        <el-card v-for="ry in ryList" :key="ry.id">
+                            <div class="item" @click="openUserInfo(ry)">
+                                <div class="manual-logo">
+                                    <svg t="1614157974375" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                         xmlns="http://www.w3.org/2000/svg" p-id="2117" width="32" height="32">
+                                        <path
+                                                d="M504.951 511.98c93.49 0 169.28-74.002 169.28-165.26 0-91.276-75.79-165.248-169.28-165.248-93.486 0-169.287 73.972-169.279 165.248-0.001 91.258 75.793 165.26 169.28 165.26z m77.6 55.098H441.466c-120.767 0-218.678 95.564-218.678 213.45V794.3c0 48.183 97.911 48.229 218.678 48.229H582.55c120.754 0 218.66-1.78 218.66-48.229v-13.77c0-117.887-97.898-213.45-218.66-213.45z"
+                                                p-id="2118"></path>
+                                    </svg>
+                                </div>
+                                <div class="info">
+                                    <div class="name">{{ry.XM}}</div>
+                                    <div class="position">{{ry.ZW}}</div>
+                                </div>
+                            </div>
+                        </el-card>
+                    </div>
+                </el-card>
+            </div>
+            <el-dialog title="联系人" :visible.sync="dialogVisible" width="30%">
+                <div class="dialog-content">
+                    <div class="info-row">
+                        <div class="label">名称：</div>
+                        <div class="value">{{ryInfo.XM}}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="label">职务：</div>
+                        <div class="value">{{ryInfo.ZW}}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="label">机构：</div>
+                        <div class="value">{{ryInfo.SSJG}}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="label">手机：</div>
+                        <div class="value">{{ryInfo.SJHM}}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="label">办公电话：</div>
+                        <div class="value">{{ryInfo.BGDH}}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="label">短号：</div>
+                        <div class="value">{{ryInfo.XNH}}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="label">办公邮箱：</div>
+                        <div class="value">{{ryInfo.YHZH}}</div>
+                    </div>
+                </div>
+                <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+            </span>
+            </el-dialog>
+        </div>
+        <!-- <div class="user-info">用户详情 - 弹窗</div> -->
+        <div id="background"></div>
+        <div class="clear"></div>
+        <!--        <div class="pagebox" id="page">-->
+        <!--            <a href="">上一页</a>-->
+        <!--            <a href="">1</a>-->
+        <!--            <a href="">下一页</a>-->
+        <!--        </div>-->
+    </div>
+    <div class="clear"></div>
+</div>
+
+<script>
+    const url = "http://www.hwinfoserver.cn/APP/Handler.ashx";
+    const token = "firedsfs"
+    const JGID = "2972310801b34815957ec33c4b22ef3c"
+    function getAxios(parameter) {
+        const params = {
+            token,
+            ...parameter
+        }
+        return new Promise((resolve) => {
+            axios.get(url, {
+                params
+            })
+                .then((res) => {
+                    resolve(res.data)
+                })
+        })
+    }
+    let app = new Vue({
+        el: "#app",
+        data: {
+            dialogVisible: false, // 控制dialog显示
+            bbcy: [], // 本部人员列表
+            cslb: [], // 处室列表
+            treeProps: {
+                label: "JGJC",
+                children: "Children"
+            },
+            treeData: [], // 下级机构列表
+            action: 1, // 控制页面显示
+            ryInfo: {}, // 人员详情
+            ryList: [], // 人员列表
+            ryListJG: {} // 被选中的人员列表机构
+        },
+        created() {
+            const self = this;
+            self.getRYLB();
+            self.getCSLB();
+            self.getXJLB();
+        },
+        methods: {
+            // 获取用户列表
+            openCSUserList(cs) {
+                const self = this;
+                self.ryListJG = cs;
+                self.getJGRYLB(cs.id);
+            },
+            // 获取机构用户列表
+            openJGUserList(jg) {
+                const self = this;
+                self.ryListJG = jg;
+                self.getJGRYLB(jg.ID);
+            },
+            // 获取用户详情
+            openUserInfo(ry) {
+                const self = this;
+                self.getRYXQ(ry.id);
+            },
+            // 获取信息方法
+            // 获取人员列表
+            getRYLB() {
+                const self = this
+                const parameter = {
+                    fun: "RYLB",
+                    JGID
+                };
+                getAxios(parameter)
+                    .then((res) => {
+                        const bbcy = []
+                        // 过滤掉测试人员
+                        for (let cy of res.Data) {
+                            if (!cy || cy.XM.indexOf('测试') != -1) { continue; }
+                            bbcy.push(cy)
+                        }
+                        self.bbcy = bbcy;
+
+                    })
+            },
+            // 获取处室列表
+            getCSLB() {
+                const self = this
+                const parameter = {
+                    fun: "CSLB",
+                    JGID
+                }
+                getAxios(parameter)
+                    .then((res) => {
+                        for(let cs of res.Data) {
+                            cs.jgmc = cs.jgmc.replace('（机关党委）', '')
+                        }
+                        self.cslb = res.Data
+                    })
+            },
+            // 获取下级机构列表
+            getXJLB() {
+                const self = this
+                const parameter = {
+                    fun: "XJLB",
+                    JGID
+                }
+                getAxios(parameter)
+                    .then((res) => {
+                        self.treeData = res.Data
+                    })
+            },
+            // 获取机构人员列表
+            getJGRYLB(jgId) {
+                const self = this
+                const parameter = {
+                    fun: "RYLB",
+                    JGID: jgId
+                };
+                return getAxios(parameter)
+                    .then((res) => {
+                        self.ryList = res.Data;
+                        self.action = 2;
+                        return res;
+                    })
+            },
+            // 获取人员详情
+            getRYXQ(ryId) {
+                const self = this
+                const parameter = {
+                    fun: "RYXQ",
+                    RYID: ryId
+                };
+                return getAxios(parameter)
+                    .then((res) => {
+                        // 因为该页面所有人员详情都使用该字段，所以赋值，后续可将值return出去
+                        self.ryInfo = res.Data[0];
+                        self.dialogVisible = true;
+                        return res;
+                    })
+            }
+        }
+    })
+</script>
+</body>
+</html>

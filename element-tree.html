@@ -1,0 +1,133 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="renderer" content="webkit" />
+    <meta name="force-rendering" content="webkit" />
+    <title>机构</title>
+    <link type="text/css" rel="stylesheet" href="./css/AddressList.css" />
+    <script type="text/javascript" src="./js//vue.min.js"></script>
+    <script type="text/javascript" src="./js/axios.min.js"></script>
+    <script src="./js/element-index.js"></script>
+    <link rel="stylesheet" href="./css/element-index.css">
+    <style type="text/css">
+        .rectClass {
+            cursor: pointer;
+            border: 2px solid #CCCCCC;
+            border-radius: 10px;
+            height: 100%;
+            width: 30%;
+            float: left;
+        }
+    </style>
+
+    <link rel="shortcut icon" href="favicon.ico">
+</head>
+
+<body>
+    <div class="mainWarp" id="app">
+
+        <div class="mainDetial">
+            <div class="lower-institutions">
+                <el-card class="box-card">
+                    <div slot="header" class="clearfix">
+                        <span>下级机构</span>
+                    </div>
+                    <el-tree :data="treeData" :props="treeProps" @node-click="nodeClick">
+                        <span slot-scope="{ node, data }" class="custom-tree-node">
+                            <!-- <img v-if="data.JGXZDM == 91" src="./img/mhzddw.png" class="manual-logo" alt />
+                            <img v-else src="./img/dd.png" class="manual-logo" alt /> -->
+                            <span>{{data.JGJC}}</span>
+                        </span>
+                    </el-tree>
+                </el-card>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <script>
+        rarbgrx.org
+        const url = "http://www.hwinfoserver.cn/APP/Handler.ashx";
+        const token = "firedsfs"
+        const JGID = "2972310801b34815957ec33c4b22ef3c"
+        function getAxios(parameter) {
+            const params = {
+                token,
+                ...parameter
+            }
+            return new Promise((resolve) => {
+                axios.get(url, {
+                    params
+                })
+                    .then((res) => {
+                        resolve(res.data)
+                    })
+            })
+        }
+        let app = new Vue({
+            el: "#app",
+            data: {
+                cslb: [], // 处室列表
+                xjlb: [],
+                treeProps: {
+                    label: "JGJC",
+                    children: "Children"
+                },
+                treeData: [], // 下级机构列表
+            },
+            created() {
+                const self = this;
+                let cslbAsync = self.getCSLB();
+                let xjlbAsync = self.getXJLB();
+                Promise.all([cslbAsync, xjlbAsync])
+                    .then((res) => {
+                        self.treeData = [...self.cslb, ...self.xjlb];
+                    });
+            },
+            methods: {
+                // 页面方法
+                nodeClick() {
+                    const self = this;
+                    console.log(arguments)
+                },
+                // 获取信息方法
+                // 获取处室列表
+                getCSLB() {
+                    const self = this;
+                    const parameter = {
+                        fun: "CSLB",
+                        JGID
+                    };
+                    return getAxios(parameter)
+                        .then((res) => {
+                            console.log('处室列表', res.Data)
+                            for (let cs of res.Data) {
+                                cs.jgmc = cs.jgmc.replace('（机关党委）', '');
+                                cs.ID = cs.id;
+                                cs.JGJC = cs.jgmc;
+                            }
+                            self.cslb = res.Data;
+                        });
+                },
+                // 获取下级机构列表
+                getXJLB() {
+                    const self = this
+                    const parameter = {
+                        fun: "XJLB",
+                        JGID
+                    };
+                    return getAxios(parameter)
+                        .then((res) => {
+                            console.log('下级机构',res.Data)
+                            self.xjlb = res.Data;
+                        })
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

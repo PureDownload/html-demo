@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchartsBy3D</title>
+    <script src="./js/echarts.min.js"></script>
+    <script src="./js/jquery.js"></script>
+</head>
+
+<body>
+    <div id="main" style="height:1000px;width:1000px;"></div>
+    <script>
+        //* 根据最小值，最大值，区间数来获取范围区间
+        function layeredInterval(min, max, tier) {
+            // 向上取整获取最大值整数
+            const maxNum = Math.ceil(max / 10) * 10
+            // 获取范围总数
+            const total = maxNum - min
+            // 总数/间隔数获取每个区间的数值
+            const lot = Number((total / tier).toFixed(0))
+            const arr = []
+            // 每次加的数值，从最小值开始算起
+            let count = min
+            // tier -1 , 不保存最后一个。保证数值完整性
+            for (let i = 0; i < tier - 1; i++) {
+                const num = Number((count + lot).toFixed(0))
+                const item = [count, num]
+                count = num
+                arr.push(item)
+            }
+            arr.push([count, maxNum])
+            return arr
+        }
+        //todo 调整中心点 选择左边高亮并显示柱状条 hover地图高亮并显示数量 计算规则修改，整数 虚化
+        //* https://www.makeapie.com/editor.html?c=xr1Ilwr5PO 有setInterval，可以设置高亮
+        /**
+            此版本通过设置geoindex && seriesIndex: [1] 属性来实现geo和map共存，来达到hover散点和区域显示tooltip的效果
+
+            默认情况下，map series 会自己生成内部专用的 geo 组件。但是也可以用这个 geoIndex 指定一个 geo 组件。这样的话，map 和 其他 series（例如散点图）就可以共享一个 geo 组件了。并且，geo 组件的颜色也可以被这个 map series 控制，从而用 visualMap 来更改。
+            当设定了 geoIndex 后，series-map.map 属性，以及 series-map.itemStyle 等样式配置不再起作用，而是采用 geo 中的相应属性。
+
+            http://echarts.baidu.com/option.html#series-map.geoIndex
+
+            并且加了pin气泡图标以示数值大小
+            */
+           //* 写文章 通过事件只在高亮时显示，areaColor设置为null导致颜色修改
+        const mainEl = document.getElementById('main') //* 获取echarts的dom对象
+        const myChart = echarts.init(mainEl) //* 获取echarts对象
+        myChart.on('mouseover',function(e) {
+            console.log('=====> mouseover --->', e);
+            const value = typeof e.value === 'object' ? e.value[2] : e.value
+            myChart.dispatchAction({
+                type: 'highlight',
+                name: e.name,
+                seriesIndex: [0,1]
+            });
+        })
+        myChart.on('mouseout', function(e) {
+            console.log('=====> mouseout --->', e);
+            const value = typeof e.value === 'object' ? e.value[2] : e.value
+            myChart.dispatchAction({
+                type: 'downplay',
+                name: e.name,
+                seriesIndex: [0,1]
+            });
+        })
+        // myChart.on('highlight', function(e) {//* 高亮事件触发
+        //     console.log('=====> highlight --->', e, arguments);
+        // })
+        // myChart.on('downplay', function(e) {//* 取消高亮事件触发
+        //     console.log('=====> downplay --->', e, arguments);
+        //     console.log('=====> getOption --->', myChart.getOption());
+        // })
+        const events = ['downplay','selectchanged','legendselectchanged',
+    'legendselected','legendunselected','legendselectall','legendinverseselect',
+    'legendscroll','datazoom','datarangeselected','timelinechanged','timelineplaychanged',
+    'restore','dataviewchanged','magictypechanged','geoselectchanged','geoselected','geounselected',
+    'axisareaselected','brush','brushEnd','brushselected','globalcursortaken','rendered','finished']
+        for(let i = 0;i<events.length;i++){
+            const eventName = events[i]
+            myChart.on(eventName, function(e) {//* 取消高亮事件触发
+                console.log('=====> '+eventName+' --->', e, arguments);
+                console.log('=====> getOption --->', myChart.getOption());
+            })
+        }
+
+        // const resourcesBaseUrl = 'https://www.makeapie.com/asset/get/s/' //* 资源文件下载网站
+        const resourcesBaseUrl = './json/'
+        const resoucesImgUrl = 'image://./png/'
+        var fssdt = resourcesBaseUrl + '440600_full.json'
+        var mapname = fssdt
+        const config = {
+            mapMarkerData: {//* 地图marker数据 中心点 code
+                fszj: [
+                    { code: '44060703', visualMap: false, name: '芦苞镇', value: [112.91621984764291, 23.373963602132063, 1111] },
+                    { code: '44060706', visualMap: false, name: '西南街道', value: [112.85393882253655, 23.18052396140802, 0] },
+                    { code: '44060702', visualMap: false, name: '白坭镇', value: [112.8660629984372, 23.034847762737595, 0] },
+                    { code: '44060707', visualMap: false, name: '云东海街道', value: [112.87014657599637, 23.238750599443655, 0] },
+                    { code: '44060704', visualMap: false, name: '乐平镇', value: [112.95433575830765, 23.288805580638137, 0] },
+                    { code: '44060701', visualMap: false, name: '大塘镇', value: [112.92141670809955, 23.455635071928432, 0] },
+                    { code: '44060705', visualMap: false, name: '南山镇', value: [112.8370205795828, 23.477001348594252, 0] },
+                    { code: '44060504', visualMap: false, name: '桂城街道', value: [113.1735248336557, 23.04046996515955, 0] },
+                    { code: '440605012', visualMap: false, name: '罗村街道', value: [113.04011826178639, 23.07561522025624, 0] },
+                    { code: '44060506', visualMap: false, name: '九江镇', value: [112.98120991234263, 22.882432621305684, 0] },
+                    { code: '44060505', visualMap: false, name: '西樵镇', value: [112.92107328564618, 22.952432621305684, 0] },
+                    { code: '44060503', visualMap: false, name: '丹灶镇', value: [112.91718243529276, 23.07547992581044, 0] },
+                    { code: '44060501', visualMap: false, name: '狮山镇', value: [113.00291814757006, 23.15147992581044, 0] },
+                    { code: '44060507', visualMap: false, name: '大沥镇', value: [113.10515616646121, 23.1313104776311, 0] },
+                    { code: '44060502', visualMap: false, name: '里水镇', value: [113.12522930393305, 23.240039356535316, 0] },
+                    { code: '44060404', visualMap: false, name: '南庄镇', value: [113.02616052898839, 22.998079169033306, 0] },
+                    { code: '44060403', visualMap: false, name: '张槎街道', value: [113.05432630102705, 23.040558124044203, 0] },
+                    { code: '44060401', visualMap: false, name: '石湾镇街道', value: [113.10062700200508, 23.007418297400927, 0] },
+                    { code: '44060402', visualMap: false, name: '祖庙街道', value: [113.1101982903412, 23.056143099970986, 0] },
+                    { code: '44060604', visualMap: false, name: '均安镇', value: [113.14093765463876, 22.7394315041687, 0] },
+                    { code: '44060603', visualMap: false, name: '杏坛镇', value: [113.13743913607186, 22.805272619487736, 0] },
+                    { code: '44060609', visualMap: false, name: '容桂街道', value: [113.27053517838763, 22.7864762878779, 0] },
+                    { code: '44060610', visualMap: false, name: '勒流街道', value: [113.15504292124501, 22.870278332241226, 0] },
+                    { code: '44060608', visualMap: false, name: '大良街道', value: [113.28587325713862, 22.849875675285276, 0] },
+                    { code: '44060602', visualMap: false, name: '龙江镇', value: [113.05088233535353, 22.86926652134271, 0] },
+                    { code: '44060607', visualMap: false, name: '伦教街道', value: [113.23217931760227, 22.888665303143045, 0] },
+                    { code: '44060601', visualMap: false, name: '乐从镇', value: [113.08494074149714, 22.95517218095785, 0] },
+                    { code: '44060606', visualMap: false, name: '北滘镇', value: [113.20518871980354, 22.94746413035751, 0] },
+                    { code: '44060605', visualMap: false, name: '陈村镇', value: [113.18510869418432, 22.990894838492365, 0] },
+                    { code: '44060802', visualMap: false, name: '更合镇', value: [112.51918025695927, 22.78465962149637, 0] },
+                    { code: '44060801', visualMap: false, name: '荷城街道', value: [112.82547733234297, 22.952577359809106, 0] },
+                    { code: '44060804', visualMap: false, name: '明城镇', value: [112.68968121695623, 22.855538358753045, 0] },
+                    { code: '44060803', visualMap: false, name: '杨和镇', value: [112.7600906593736, 22.82462827527561, 0] },
+                    { code: '-1', visualMap: false, name: '花都区飞地', value: [113.06922871578368, 23.239958467101808, 0] },
+                    { code: '-1', visualMap: false, name: '南海区飞地', value: [113.06892499319113, 113.06888700778104, 0] }
+                ],
+                fsqy: [
+                    {
+                        visualMap: false, //* 解决visualMap颜色冲突的问题
+                        name: '三水区',
+                        code: '440607',
+                        value: [112.909414, 23.27504, 0]
+                    },
+                    {
+                        visualMap: false,
+                        name: '高明区',
+                        code: '440608',
+                        value: [112.662123, 22.853855, 0]
+                    },
+                    {
+                        visualMap: false,
+                        name: '南海区',
+                        code: '440605',
+                        value: [113.045577, 23.071562, 0]
+                    },
+                    {
+                        visualMap: false,
+                        name: '禅城区',
+                        code: '440604',
+                        value: [113.062414, 23.009643, 0]
+                    },
+                    {
+                        visualMap: false,
+                        name: '顺德区',
+                        code: '440606',
+                        value: [113.181826, 22.85851, 0]
+                    }
+                ]
+            },
+            mapBaseData: {
+                fszj: [
+                    { groupId: 1, code: '44060703', name: '芦苞镇', value: 1111 },
+                    { code: '44060706', name: '西南街道', value: 0 },
+                    { code: '44060702', name: '白坭镇', value: 0 },
+                    { code: '44060707', name: '云东海街道', value: 0 },
+                    { code: '44060704', name: '乐平镇', value: 0 },
+                    { code: '44060701', name: '大塘镇', value: 0 },
+                    { code: '44060705', name: '南山镇', value: 0 },
+                    { code: '44060504', name: '桂城街道', value: 0 },
+                    { code: '440605012', name: '罗村街道', value: 0 },
+                    { code: '44060506', name: '九江镇', value: 0 },
+                    { code: '44060505', name: '西樵镇', value: 0 },
+                    { code: '44060503', name: '丹灶镇', value: 0 },
+                    { code: '44060501', name: '狮山镇', value: 0 },
+                    { code: '44060507', name: '大沥镇', value: 0 },
+                    { code: '44060502', name: '里水镇', value: 0 },
+                    { code: '44060404', name: '南庄镇', value: 0 },
+                    { code: '44060403', name: '张槎街道', value: 0 },
+                    { code: '44060401', name: '石湾镇街道', value: 0 },
+                    { code: '44060402', name: '祖庙街道', value: 0 },
+                    { code: '44060604', name: '均安镇', value: 0 },
+                    { code: '44060603', name: '杏坛镇', value: 0 },
+                    { code: '44060609', name: '容桂街道', value: 0 },
+                    { code: '44060610', name: '勒流街道', value: 0 },
+                    { code: '44060608', name: '大良街道', value: 0 },
+                    { code: '44060602', name: '龙江镇', value: 0 },
+                    { code: '44060607', name: '伦教街道', value: 0 },
+                    { code: '44060601', name: '乐从镇', value: 0 },
+                    { code: '44060606', name: '北滘镇', value: 0 },
+                    { code: '44060605', name: '陈村镇', value: 0 },
+                    { code: '44060802', name: '更合镇', value: 0 },
+                    { code: '44060801', name: '荷城街道', value: 0 },
+                    { code: '44060804', name: '明城镇', value: 0 },
+                    { code: '44060803', name: '杨和镇', value: 0 },
+                    { code: '-1', name: '花都区飞地', value: 0 },
+                    { code: '-1', name: '南海区飞地', value: 0 }
+                ],
+                fsqy: [
+                    {
+                        name: '三水区',
+                        code: '440607',
+                        value: 0
+                    },
+                    {
+                        name: '高明区',
+                        code: '440608',
+                        value: 0
+                    },
+                    {
+                        name: '南海区',
+                        code: '440605',
+                        value: 0
+                    },
+                    {
+                        name: '禅城区',
+                        code: '440604',
+                        value: 0
+                    },
+                    {
+                        name: '顺德区',
+                        code: '440606',
+                        value: 0
+                    }
+                ]
+            }
+        }
+        
+        const numArr = layeredInterval(0, 5000, 5)
+        // 获取侧边范围栏样式及最大范围最小范围
+        const pieces = [
+            {
+                gte: numArr[4][0],
+                lte: numArr[4][1],
+                label: `${numArr[4][0]} - ${numArr[4][1]}`,
+                color: '#7e2616'
+            },
+            {
+                gte: numArr[3][0],
+                lt: numArr[3][1],
+                label: `${numArr[3][0]} - ${numArr[3][1]}`,
+                color: '#af4c42'
+            },
+            {
+                gte: numArr[2][0],
+                lt: numArr[2][1],
+                label: `${numArr[2][0]} - ${numArr[2][1]}`,
+                color: '#cf5f49'
+            },
+            {
+                gte: numArr[1][0],
+                lt: numArr[1][1],
+                label: `${numArr[1][0]} - ${numArr[1][1]}`,
+                color: '#e9823d'
+            },
+            {
+                gte: numArr[0][0],
+                lt: numArr[0][1],
+                label: `${numArr[0][0]} - ${numArr[0][1]}`,
+                color: '#f9c548'
+            }
+        ]
+
+        setTimeout(function () {
+            mapInit()
+        }, 1000)
+        $.getJSON(mapname, function (data) {
+            echarts.registerMap('fs', data)
+        })
+        // 移入显示过程 刚开始使用绑定 之后使用事件
+        var mapInit = () => {
+            $.getJSON(mapname, function (geoJson) {
+                echarts.registerMap('bd', geoJson);
+
+                myChart.hideLoading();
+                const mapZoom = 1.22
+                const areaColorByBottom = 'rgba(255,255,255,.0)'
+                option = {
+                    // focusNodeAdjacency: true,
+                    grid: {
+                        left: '0%'
+                    },
+                    visualMap: {
+                        type: 'piecewise',
+                        min: 0,
+                        max: 60000,
+                        bottom: 40,
+                        // text: ['高', '低'],
+                        textStyle: {
+                            color: '#ffffff',
+                            fontSize: 16
+                        },
+                        pieces,
+                        // 取消选择图例
+                        // 地图颜色
+                        target: {
+                            outOfRange: {
+                                color: '#eeeeee'
+                            }
+                        },
+                        itemWidth: 20, //* label前面小块的宽度高度
+                        itemHeight: 14,
+                        // 表示 visualMap-piecewise 本身的视觉样式。
+                        // legend颜色
+                        controller: {
+                            outOfRange: {
+                                color: '#757575'
+                            }
+                        }
+                    },
+                    geo: [{ //* 最下面一层阴影
+                        map: 'fs',
+                        aspectScale: 0.75, //* 地图长宽比
+                        layoutCenter: ['50.4%', '51%'], //* 设置地图布局
+                        layoutSize: '100%',
+                        silent: true, //* 是否不响应和触发地图事件
+                        roam: false, //* 是否开启缩放和平移
+                        // z: 0,
+                        // zoom: 0.86,
+                        itemStyle: { // 设置地图样式
+                            normal: {
+                                areaColor: areaColorByBottom,
+                                shadowColor: 'rgba(0, 0, 0, 1)',
+                                shadowBlur: 0,
+                                shadowOffsetX: 0,
+                                shadowOffsetY: 0,
+                                borderColor: '#2ab8ff',
+                                borderWidth: 1
+                            },
+                            emphasis: {
+                                areaColor: areaColorByBottom,
+                                borderWidth: 1,
+                                shadowBlur: 0,
+                                shadowOffsetX: 0,
+                                shadowOffsetY: 0,
+                                color: '#2ab8ff',
+                                label: {
+                                    show: false
+                                }
+                            }
+                        }
+                    }
+                    ],
+                    series: [
+                        {
+                            type: 'map',
+                            label: {
+                                normal: {
+                                    show: true,
+                                    textStyle: {
+                                        color: '#fff',
+                                        fontSize: 9
+                                    },
+                                    formatter: '{b}'
+                                }
+                            },
+                            data: config.mapBaseData.fsqy,
+                            itemStyle: {
+                                normal: {
+                                    borderColor: '#ffffff',
+                                    borderWidth: 1,
+                                    areaColor: 'rgba(1,80,231,1)',
+                                    shadowColor: 'rgba(0, 0, 0, 15)',
+                                    shadowBlur: 0,
+                                    shadowOffsetX: 0,
+                                    shadowOffsetY: 0
+                                }
+                            },
+                            emphasis: {
+                                focus: 'series',
+                                itemStyle: { //* 鼠标悬浮在上面的显示
+                                    areaColor: null,
+                                    borderColor: '#2ab8ff',
+                                    borderWidth: 1,
+                                    shadowColor: 'rgba(0, 255, 255, 0.7)',
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowOffsetY: 0,
+                                },
+                                label: {
+                                    textStyle: {
+                                        color: '#fff'
+                                    }
+                                },
+                                blurScope: 'glbal'
+                            },
+                            zoom: mapZoom,
+                            roam: false,
+                            map: 'fs'
+                        },
+                        {   
+                            type: 'scatter',
+                            coordinateSystem: 'geo',
+                            symbol: 'pin',
+                            legendHoverLink: true,
+                            symbolSize: [35, 35], //* marker大小
+                            // legendHoverLink: true,
+                            visualMap: false,
+                            label: {//* marker里面显示的label
+                                show: false,
+                                formatter(value) {
+                                    return value.data.value[2]
+                                },
+                                fontSize: 9,
+                                color: '#fff'
+                            },
+                            itemStyle: {
+                                normal: {
+                                    color: 'rgba(0,0,0,0)', // 标志颜色
+                                    shadowBlur: 2,
+                                    shadowColor: 'D8BC37'
+                                }
+                            },
+                            data: config.mapMarkerData.fsqy,
+                            showEffectOn: 'render',
+                            rippleEffect: {
+                                brushType: 'stroke'
+                            },
+                            emphasis: {//* 高亮样式(用于悬浮)
+                                focus: 'series',
+                                // blurScope: 'series',
+                                itemStyle: {
+                                    color: '#f52443', // 标志颜色
+                                    shadowBlur: 2,
+                                    shadowColor: 'D8BC37'
+                                },
+                                label: {
+                                    show: true,
+                                    formatter(value) {
+                                        return value.data.value[2]
+                                    },
+                                    fontSize: 9,
+                                    color: '#fff'
+                                }
+                            },
+                            hoverAnimation: true,
+                            zlevel: 1
+                        }
+                    ]
+                }
+                myChart.setOption(option)
+            })
+        }
+        // 订单 表单 工单
+        // 订单 
+        // 表单
+        // 工单
+    </script>
+</body>
+
+</html>

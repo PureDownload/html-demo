@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="/js/js.cookie.js"></script>
+</head>
+<body>
+    <script>
+        Cookies.set('token','aaabbb',{samesite: 'none', secure: true})
+        console.log(Cookies.get('token'));
+        // document.cookie = "token=111222333"
+        // document.cookie = 'ecc_acc=arcsabceddsf; domain=.192.168.32.35';
+        // window.frames.document.cookie = "token11=bb" 
+        // console.log(document.cookie)
+        // console.log(window.frames.document.cookie);
+        // console.log(window.frames.document);
+    </script>
+    <script>
+        function uploadImg(callback) {
+            //* 假设这个是一个请求 两秒后返回
+            setTimeout(() => {
+                callback && callback({code: '200',message:'请求成功'})
+            },2000)
+        }
+        uploadImg((res) => {
+            console.log(res);
+        })
+    </script>
+</body>
+</html>

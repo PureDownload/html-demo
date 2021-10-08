@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./js/jquery.js"></script>
+</head>
+<body>
+    <iframe></iframe>
+    <a id="open" href="alipays://platformapi/startapp?appId=20000001"><div id="asss">打开支付宝</div></a>
+    <script>
+        var triggerEvent = "touchstart";
+        const url = 'https://tse1-mm.cn.bing.net/th?id=OIP-C.jDcv2JKzvTces6Hfi9f8iAHaFj&w=123&h=100&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2'
+        // savePicture('https://tse1-mm.cn.bing.net/th?id=OIP-C.jDcv2JKzvTces6Hfi9f8iAHaFj&w=123&h=100&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2')
+        function savePicture(Url){
+            var blob=new Blob([''], {type:'application/octet-stream'});
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = Url;
+            a.download = Url.replace(/(.*\/)*([^.]+.*)/ig,"$2").split("?")[0];
+            var e = document.createEvent('MouseEvents');
+            e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            a.dispatchEvent(e);
+            URL.revokeObjectURL(url);
+        }
+
+        // saveImg(url,'aa.png')
+        function saveImg(downloadLink,fileName){
+            // 生成一个a元素
+            var a = document.createElement('a')
+            // 创建一个单击事件
+            var event = new MouseEvent('click')
+            
+            // 将a的download属性设置为我们想要下载的图片名称，带上图片类型，如：test.png
+            a.download = fileName; 
+            // 将生成的URL设置为a.href属性
+            a.href = downloadLink;
+            
+            // 触发a的单击事件
+            a.dispatchEvent(event)
+        }
+        /**
+         * 在本地进行文件保存
+         * @param  {String} data     要保存到本地的图片数据
+         * @param  {String} filename 文件名
+         */
+        function saveFile(data, filename) {
+            const save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+            save_link.href = data;
+            save_link.download = filename;
+
+            const event = document.createEvent('MouseEvents');
+            event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            save_link.dispatchEvent(event);
+        }
+        // saveFile(url,'aa.png')
+        // function saveFile1() {
+        //     var src = 'http://imtt.dd.qq.com/16891/26747DD8B125A8479AD0C9D22CA47BC9.apk?fsname=com.snda.wifilocating_4.2.91_3211.apk&csr=1bbd';
+        //     var form = document.createElement('form');
+        //     form.action = url;
+        //     document.getElementsByTagName('body')[0].appendChild(form);
+        //     form.submit();
+        // }
+        // saveFile1()
+        function saveFile2() {
+            // var src = 'http://imtt.dd.qq.com/16891/26747DD8B125A8479AD0C9D22CA47BC9.apk?fsname=com.snda.wifilocating_4.2.91_3211.apk&csr=1bbd';
+            var iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = "javascript: '<script>location.href=\"" + url + "\"<\/script>'";
+            document.getElementsByTagName('body')[0].appendChild(iframe);
+        }
+
+        function openPay() {
+            const payEl = document.getElementById('asss')
+            const event = document.createEvent('MouseEvents');
+            event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            // alert('发送')
+            // payEl.dispatchEvent(event);
+            payEl.click()
+        }
+        // openPay()
+        // window.location.href = 'alipays://platformapi/startapp?appId=20000001'
+    </script>
+</body>
+</html>
