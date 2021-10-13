@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 引入样式 -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"> -->
+    <!-- 引入组件库 -->
+    <!-- <script src="https://unpkg.com/element-ui/lib/index.js"></script> -->
+</head>
+<body>
+    <script>
+        // 以前写法
+        // let p1 = new Promise((resolve,reject) => {
+        //     setTimeout(() => {
+        //         console.info('setTimeout执行完毕')
+        //         resolve(1000)
+        //     },1000)
+        // })
+        // function fun1(){
+        //     // 以前是这样获取Promise返回的内容的
+        //     p1.then((value) => {
+        //         console.info(value)
+        //     })
+        // }
+        // fun1()
+
+        // //使用async 写法
+        // let p2 = new Promise((resolve,reject) => {
+        //     setTimeout(() => {
+        //         console.info('setTimeout执行完毕')
+        //         resolve(1000)
+        //     },1000)
+        // })
+        // async function fun2(){
+        //     // 使用await可以等到p2执行完毕之后再走下一步 并且获取p2的返回值 await必须和async搭配使用
+        //     let value = await p2
+        //     // p2不走完不执行这一步
+        //     console.info('value',value)
+        // }
+        // fun2()
+        // d a c f h g b e
+        
+        async function async1() {
+            console.log("a");
+            await  async2(); //执行这一句后，await会让出当前线程，将后面的代码加到任务队列中，然后继续执行函数后面的同步代码
+            console.log("b");
+        }
+        async function async2() {
+            console.log( 'c');
+        }
+        console.log("d");
+        setTimeout(function () {
+            console.log("e");
+        },0);
+        async1();
+        new Promise(function (resolve) {
+            console.log("f");
+            resolve();
+        }).then(function () {
+            console.log("g");
+        });
+        console.log('h');
+        // 谁知道为啥结果不一样？？？？？？？？？？？？？
+        // 直接在控制台中运行结果：      d a c f h g b e
+        // 在页面的script标签中运行结果：d a c f h b g e
+
+    </script>
+</body>
+</html> 

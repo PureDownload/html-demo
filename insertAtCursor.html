@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form>
+        <textarea id="demo" style="width:500px; height:300px">将鼠标定位到这里的任意位置，然后点击下面的按钮，即可测试效果</textarea>
+        <input id="button" type="button" value="插入">
+    </form>
+    <script type="text/javascript">
+        function insertAtCursor(myField, myValue) {
+            // 判断是否有光标
+            //IE support
+            if (document.selection) {
+                myField.focus();
+                sel = document.selection.createRange();
+                sel.text = myValue;
+                sel.select();
+            }
+            //MOZILLA/NETSCAPE support 
+            else if (myField.selectionStart || myField.selectionStart == '0') {
+                // 获取光标的起始和结束位置
+                var startPos = myField.selectionStart;
+                var endPos = myField.selectionEnd;
+                // save scrollTop before insert www.keleyi.com
+                // 获取离顶点的位置 方便等下定位位置
+                var restoreTop = myField.scrollTop;
+                // 拼接value值并设置value值
+                myField.value = myField.value.substring(0, startPos) + myValue + myField.value.substring(endPos, myField.value.length);
+                if (restoreTop > 0) {
+                    myField.scrollTop = restoreTop;
+                }
+                // 聚焦
+                myField.focus();
+
+                // 将光标移动位置
+                myField.selectionStart = startPos + myValue.length;
+                myField.selectionEnd = startPos + myValue.length;
+            } else {
+                // 如果没有光标则放在最后面
+                myField.value += myValue;
+                myField.focus();
+            }
+        }
+        
+        function callInsertAtCursor(){
+            insertAtCursor(document.getElementById('demo'),'插入语句')
+        }
+
+        document.getElementById('button').onclick = callInsertAtCursor;
+    </script>
+</body>
+
+</html>

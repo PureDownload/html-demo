@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .wrap div:first-child div li:nth-child(odd) {
+            color: blue;
+        }
+        .wrap div:last-child div li:nth-child(even) {
+            color: blue;
+        }
+        /* 给元素增加动态阴影 */
+        .sushi {
+            margin: 100px;
+            width: 150px;
+            height: 150px;
+            background-image: url("https://www.kirupa.com/icon/1f363.svg");
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+        .colorfulShadow {
+            position: relative;
+        }
+
+        .colorfulShadow::after {
+            content: "";
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            background: inherit;
+            background-position: center center;
+            filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.50)) blur(20px);
+            z-index: -1;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- <div class="wrap">
+        <div>
+            <div>
+                <ul>
+                    <li>1</li>
+                    <li>2</li>
+                    <li>3</li>
+                    <li>4</li>
+                    <li>5</li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <div>
+                <ul>
+                    <li>1</li>
+                    <li>2</li>
+                    <li>3</li>
+                    <li>4</li>
+                    <li>5</li>
+                </ul>
+            </div>
+        </div>
+    </div> -->
+    <div class="parent">
+        <div class="colorfulShadow sushi"></div>
+    </div>
+</body>
+</html>

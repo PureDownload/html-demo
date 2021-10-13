@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>readFile</title>
+</head>
+<body>
+    jsReadFile:<input type="file" id="file"/>
+    <script src="../js/jqueyr-3.5.1.min.js"></script>
+    <script>
+        //js 读取文件
+        $('#file').on('change',jsReadFiles)
+        function jsReadFiles(e) {
+            console.info('进来了')
+            let files = e.currentTarget.files;
+            if (files.length) {
+                var file = files[0];
+                var reader = new FileReader();//new一个FileReader实例
+                if (/text+/.test(file.type)) {//判断文件类型，是不是text类型
+                    reader.onload = function() {
+                        // this.resule 为解析后的内容 如果解析失败则为null
+                        $('body').append('<pre>' + this.result + '</pre>');
+                    }
+                    // 解析成文本
+                    reader.readAsText(file);
+                } else if(/image+/.test(file.type)) {//判断文件是不是imgage类型
+                    reader.onload = function() {
+                        $('body').append('<img src="' + this.result + '"/>');
+                    }
+                    // 解析成图片
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

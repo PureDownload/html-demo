@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>debounce</title>
+</head>
+<body>
+    <button id="showBtn" type="button">顯示訊息</button>
+    <div id="Message">a</div>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js"></script>
+    <script>
+        let btnEl = document.getElementById('showBtn')
+        let messageEl = document.getElementById('Message')
+        var hideMsg = function(){
+            messageEl.innerText = ''
+        }
+        // 创建一个防抖函数
+        let debounce = _.debounce(hideMsg, 1000)
+
+        btnEl.onclick = function(){
+            messageEl.innerText = "点击了"
+            debounce()
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pdfh5</title>
+    <link rel="stylesheet" href="../pdfh5-master/pdfh5-master/css/pdfh5.css" />
+</head>
+<body>
+    <div id="demo"></div>
+    <script src="../pdfh5-master/pdfh5-master/js/pdf.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../pdfh5-master/pdfh5-master/js/pdf.worker.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../pdfh5-master/pdfh5-master/js/jquery-1.11.3.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../pdfh5-master/pdfh5-master/js/pdfh5.js" type="text/javascript" charset="utf-8"></script>
+
+    <script>
+        var pdfh5 = new Pdfh5('#demo', {
+            pdfurl: "https://www.gjtool.cn/pdfh5/git.pdf"
+        });
+    </script>
+</body>
+</html>

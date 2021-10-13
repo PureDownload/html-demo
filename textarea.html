@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Textarea</title>
+</head>
+<body>
+    <div id="app">
+        <textarea v-model="areaVal" name="test" id="area" cols="30" rows="10" style="width: 600px;"></textarea>
+        <button @click="update">扫描</button>
+    </div>
+    <script src="../js/Vue.js"></script>
+    <script>
+        // let value = "广东省 广州市 天河区海文路猎德复建房5区文化楼1905,罗先生,18318028414,1;山东省 青岛市 李沧区君峰路九号楼四单元401,陈笙,19861801021,1"
+        // const areaEl = document.getElementById('area')
+        // areaEl.value = value
+        // value = value.replace(';', '\n')
+        // console.info(value, 'value')
+        // areaEl.value = value
+        let app = new Vue({
+            el: '#app',
+            data:{
+                areaVal:''
+            },
+            created(){
+            },
+            methods:{
+                update() {
+                    this.areaVal = this.areaVal.replace(';','\n')
+                }
+            }
+        })
+    </script>
+</body>
+</html>

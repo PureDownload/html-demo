@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+            margin: 0; 
+            padding: 0; 
+            border: 0; 
+            font: inherit; 
+            font-size: 100%;
+            vertical-align: baseline;
+        }
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+            margin-bottom: 0.5rem;
+            font-family: inherit;
+            font-weight: 500;
+            line-height: 1.2;
+            color: inherit;
+        }
+        p{
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col, .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm, .col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md, .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg, .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl, .col-xl-auto {
+            position: relative;
+            width: 100%;
+            min-height: 1px;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+        /* table {
+            table-layout: fixed;
+        }
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        } */
+    </style>
+    <style>
+        body{
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+        }
+        .content{
+            padding: 20px;
+            text-align: center;
+        }
+        h3{
+            font-size:  1.75rem;
+        }
+        .left{
+            text-align: left;
+        }
+        .row{
+            display: flex;
+            /* margin-left: -15px;
+            margin-right: -15px; */
+            flex-wrap: wrap;
+        }
+        .col-md-12{
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 0;
+        }
+        .col-sm-6 {
+            box-sizing: border-box;
+            -webkit-box-flex: 0;
+            -ms-flex: 0 0 50%;
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+        .unity_uuid {
+            width: 95%;
+            text-align: right;
+        }
+        .table-b{
+            font-size: 14px;
+        }
+        .table-bordered {
+            border: 1px solid #dee2e6;
+            border-collapse: collapse
+        }
+        .table {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 1rem;
+            background-color: transparent;
+            /* box-sizing: border-box; */
+        }
+        .table-bordered th, .table-bordered td {
+            border: 1px solid #dee2e6;
+            border-collapse: collapse
+        }
+        .table th, .table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border: 1px solid #dee2e6;
+            border-collapse: collapse
+        }
+        .text-left {
+            text-align: left !important;
+        }
+        .table th{
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>海南省住房合同备案证明</h3>
+                    <p class="left">该申请户居民家庭在我省住房备案情况如下：</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <p class="left">申请人信息</p>
+                </div>
+                <div class="col-sm-6"><p class="unity_uuid">统一查询编号：{{user.queryCode}}</p></div>
+            </div>
+            <div class="table-b">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th colspan="3">姓名</th>
+                            <th colspan="3">证件类型</th>
+                            <th colspan="4">证件号码</th>
+                            <th colspan="2">备案情况（套）</th>
+                        </tr>
+                        <tr>
+                            <td colspan="3">{{user.name}}</td>
+                            <td colspan="3">{{user.cardType}}</td>
+                            <td colspan="4">{{user.cardNumber}}</td>
+                            <td colspan="2">{{user.record}}套</td>
+                        </tr>
+                        <tr class="text-left">
+                            <td colspan="12">
+                                <pre>{{user.explain}}</pre>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- <div class="QR">
+                <img src="aaaaa" alt="">
+            </div> -->
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        let mockUser = {queryCode:'1',
+            name:'admin',
+            cardNumber:'123412341234123412',
+            cardType:'身份证',
+            record:'1',
+            explain:'aa'};
+        let app = new Vue({
+            el: '#app',
+            data:{
+                user:{}
+            },
+            created(){
+                this.user = mockUser;
+            },
+            methods:{
+                getUser(queryCode){
+                    axios.get('/query').then((res) => {
+                        this.user = res.data;
+                    })
+                }
+            }
+        })
+    </script>
+</body>
+</html>

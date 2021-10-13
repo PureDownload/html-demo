@@ -1,0 +1,108 @@
+<html>
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+
+    <title>很有特色的荧光鼠标</title>
+
+</head>
+
+<body id="mybody" style="filter:light(enabled=1);" bgcolor="#ffffff" text="#000000">
+
+    <div id="Layer1" style="height: 32; left: 66; position: absolute; top: 41; width: 52">
+
+        <dd>
+
+            <div align="right">
+
+                <img src="images/light.gif" width="29" height="30">
+
+            </div>
+
+        </dd>
+
+    </div>
+
+    <table border="0" width="100%">
+
+        <tr>
+
+            <td width="82%">
+                <font face="宋体" color="#FF00FF" style="font-size: 9pt">
+
+                </font><span style="font-size: 9pt">
+
+                    摘要:HTML5源码,Canvas实例,Canvas动画
+
+                    　　一个HTML5_Canvas练手程序，用Canvas标签<br><br><br>绘制简单的动画效果：模拟十字路口绿灯亮，<br><br>车走；红灯亮，车停效果，动画效果比较粗糙，<br>供入门者参考。HTML5程序，目前暂不支持IE。
+
+                    <br>
+                    　射击游戏,开始游戏后，<br>用鼠标点击下落的物体，<br>可射击爆炸物体，生成的游戏画质精细，<br>动画流畅，测试时请使用火狐或Chrome浏览器，<br>IE8以下版本不能运行本游戏。<br>虽然游戏功能不算强大，<br><br>但却用到了HTML5中基础的技巧，<br><br><br>另外，一些游戏操作的JS类也是想当不错的选择。<br><br>
+
+                    　基于html5离线存储实例，当加载页面时，应用程序利用一个 onLoad
+                    函数来核查相<br><br>应的数据是否已经位于本地高速缓存区中并且将添加一个<br><br>欢迎窗口，添加一个事件侦听程序以<br><br>及侦听一个storage
+                    事件，<br><br>应用程序能够对localStorage变更进行响应，<br><br>核查浏览器支持localStorage功能，<br><br>设置数据到缓存，清除数据等功能。
+
+                </span>
+            </td>
+
+        </tr>
+
+    </table>
+
+    <script language="vbscript">
+
+        dim red, gre, blu
+
+        dim x, y, z
+
+        red = 255
+
+        gre = 255
+
+        blu = 0
+
+        z = 100
+
+        sub window_onload()
+
+        call mybody.filters.light.addPoint(0, 0, z, Red, Gre, Blu, 100)
+
+        mybody.style.cursor = "hand"
+
+        end sub
+
+        sub document_onmousemove()
+
+        x = window.event.x
+
+        y = window.event.y
+
+        call mybody.filters.Light.MoveLight(0, x, y, 100, 1)
+
+        end sub
+
+    </script>
+
+    <script language="javascript">
+
+        //这是使图层移动的函数
+
+        function move_layer() {
+
+            Layer1.style.left = event.clientX + document.body.scrollLeft - 50;
+
+            Layer1.style.top = event.clientY + document.body.scrollTop - 20;
+
+        }
+
+        //这里的意思是，如果鼠标移动时就调用"move_layer"函数
+
+        document.onmousemove = move_layer;
+
+    </script>
+
+</body>
+
+</html>

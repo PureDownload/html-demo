@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- <video controls="controls" src="https://www.w3school.com.cn/i/movie.ogg" width="100px" height="100px"></video>
+
+    <center>
+		<video id="video"  width="640" height="480" muted controls autoplay="autoplay" preload="auto" type="video/mp4" >
+		  <source src="http://111.229.153.106:480/upload/287de0c6cfb243d48bb47707f65f0a71.MOV" type="video/mov" />
+		  您的浏览器不支持 HTML5 video 标签。
+		</video>
+  </center> -->
+
+  <!-- <div id="div"></div> -->
+  <!-- <img alt="preview" src="" id="myImage"/> -->
+  <!-- <img id="img1" src="http://111.229.153.106:480/upload/40794296a6d44b34ab3dce813df7fb12.jpg" width="120px" height="120px"> -->
+  <!-- 竖着拍 6  -->
+  <img id="img2" src="http://111.229.153.106:480/upload/49d455b8382542aaa67965c4fba113e5.jpg" width="120px" height="120px">
+  <!-- 横着拍 镜头右边 3-->
+  <img id="img3" src="http://111.229.153.106:480/upload/e647cdb316c7464881d3b87f83bfbb20.jpg" width="120px" height="120px">
+  <!-- 正常 横着拍 镜头在左边 1 -->
+  <img id="img4" src="http://111.229.153.106:480/upload/fe6d5216789d4ff29aa4774d2a41ac8b.jpg"  width="120px" height="120px">
+  <script src="https://cdn.bootcss.com/exif-js/2.3.0/exif.min.js"></script>
+
+  <hr />
+
+  <canvas id="Drawborder2" ></canvas>
+  <canvas id="Drawborder3" ></canvas>
+  <canvas id="Drawborder4" ></canvas>
+  
+  img2
+  <img id="aImg2" width="100px" height="100px"/>
+  img3
+  <img id="aImg3" width="100px" height="100px"/>
+  img4
+  <img id="aImg4" width="100px" height="100px"/>
+
+
+  <script>
+
+    window.onload=getExif;
+ 
+    function getExif() {
+        var img2= document.getElementById("img2");
+        EXIF.getData(img2, function() {
+            var make = EXIF.getTag(this, "Make");
+            var model = EXIF.getTag(this, "Model");
+            var makeAndModel = document.getElementById("makeAndModel");
+            var a = EXIF.getAllTags(this);
+            var b = EXIF.getTag(this, 'Orientation');
+            console.info('2',b);
+            var image = new Image();
+            image.setAttribute('crossOrigin', 'anonymous');
+            image.src = img2.src;
+            var canvas = document.getElementById('Drawborder2')
+            var aImg = document.getElementById('aImg2')
+            image.onload = function(){
+              updateImg(this,8,canvas,aImg)
+            }
+        });
+    
+        var img3= document.getElementById("img3");
+        EXIF.getData(img3, function() {
+            var make = EXIF.getTag(this, "Make");
+            var model = EXIF.getTag(this, "Model");
+            var makeAndModel = document.getElementById("makeAndModel");
+            var a = EXIF.getAllTags(this);
+            var b = EXIF.getTag(this, 'Orientation');
+            console.info('3',b)
+            var image = new Image();
+            image.setAttribute('crossOrigin', 'anonymous');
+            image.src = img3.src;
+            var canvas = document.getElementById('Drawborder3')
+            var aImg = document.getElementById('aImg3')
+            image.onload = function(){
+              updateImg(this,b,canvas,aImg)
+            }
+        });
+    
+        var img4= document.getElementById("img4");
+        EXIF.getData(img4, function() {
+            var make = EXIF.getTag(this, "Make");
+            var model = EXIF.getTag(this, "Model");
+            var makeAndModel = document.getElementById("makeAndModel");
+            var a = EXIF.getAllTags(this);
+            var b = EXIF.getTag(this, 'Orientation');
+            console.info('4',b)
+            var image = new Image();
+            image.setAttribute('crossOrigin', 'anonymous');
+            image.src = img4.src;
+            var canvas = document.getElementById('Drawborder4')
+            var aImg = document.getElementById('aImg4')
+            image.onload = function(){
+              updateImg(this,b,canvas,aImg)
+            }
+        });
+    }
+
+    //传入image 方向角 画布 aImg可以选择删除 返回翻转后的base64
+    function updateImg(img,Orientation,canvas,aImg){
+
+      var expectWidth = img.naturalWidth;
+      var expectHeight = img.naturalHeight;
+      if (img.naturalWidth > img.naturalHeight && img.naturalWidth > 800) {
+        expectWidth = 800;
+        expectHeight = expectWidth * img.naturalHeight / img.naturalWidth;
+      } else if (img.naturalHeight > img.naturalWidth && img.naturalHeight > 1200) {
+        expectHeight = 1200;
+        expectWidth = expectHeight * img.naturalWidth / img.naturalHeight;
+      }
+
+      var ctx = canvas.getContext("2d");
+      canvas.width = expectWidth;
+      canvas.height = expectHeight;
+      ctx.drawImage(img, 0, 0, expectWidth, expectHeight);
+
+      if(Orientation != "" && Orientation != 1){
+        console.log('旋转处理');
+        switch(Orientation){
+          case 6://需要顺时针（向左）90度旋转
+            console.log('需要顺时针（向左）90度旋转');
+            rotateImg('left',canvas,90,img);
+            break;
+          case 8://需要逆时针（向右）90度旋转
+            console.log('需要逆时针（向右）90度旋转');
+            rotateImg('right',canvas,90,img);
+            break;
+          case 3://需要180度旋转
+            console.log('需要180度旋转');
+            rotateImg('left',canvas,180,img);//转两次
+            break;
+        }
+        //base64 在外定义为全局变量
+        //下面base64为得到旋转后的base64图片
+        base64 = canvas.toDataURL("image/jpg", 0.8);
+        //可以删除
+        aImg.src = base64
+
+        return base64
+      }
+    }
+    // 翻转画布 传入方向 left:顺时针 right 逆时针 canvas 画布 degree 角度 img image对象
+    function rotateImg(direction,canvas,degree,img){
+      var height = img.height;
+      var width = img.width;
+      let ctx = canvas.getContext('2d')
+      let step = degree / 90
+      if(direction == 'left'){
+        degree = degree * Math.PI / 180
+      }else{
+        degree = (-degree) * Math.PI /180
+        step = 3
+      }
+
+      canvas.height = height
+      canvas.width = width
+
+      switch (step) {
+        case 0:
+            ctx.drawImage(img, 0, 0);
+            break;
+        case 1:
+            ctx.rotate(degree);
+            ctx.drawImage(img, 0, -height);
+            break;
+        case 2:
+            ctx.rotate(degree);
+            ctx.drawImage(img, -width, -height);
+            break;
+        case 3:
+            ctx.rotate(degree);
+            ctx.drawImage(img, -width, 0);
+            break;
+      }
+    }
+
+    // var type = 'jpeg';
+    // var fixtype = function (type) {
+    //     type = type.toLocaleLowerCase().replace(/jpg/i, 'jpeg');
+    //     var r = type.match(/png|jpeg|bmp|gif/)[0];
+    //     return 'image/' + r;
+    // };
+
+    //对图片旋转处理 added by lzk
+// function rotateImg(img, direction,canvas) {
+//   debugger
+//   //alert(img);
+//   //最小与最大旋转方向，图片旋转4次后回到原方向
+//   var min_step = 0;
+//   var max_step = 3;
+//   //var img = document.getElementById(pid);
+//   if (img == null)return;
+//   //img的高度和宽度不能在img元素隐藏后获取，否则会出错
+//   var height = img.height;
+//   var width = img.width;
+//   //var step = img.getAttribute('step');
+//   var step = 2;
+//   if (step == null) {
+//     step = min_step;
+//   }
+//   if (direction == 'right') {
+//     step++;
+//     //旋转到原位置，即超过最大值
+//     step > max_step && (step = min_step);
+//   } else {
+//     step--;
+//     step < min_step && (step = max_step);
+//   }
+//   //旋转角度以弧度值为参数
+//   var degree = step * 90 * Math.PI / 180;
+//   var ctx = canvas.getContext('2d');
+//   switch (step) {
+//       case 0:
+//           canvas.width = width;
+//           canvas.height = height;
+//           ctx.drawImage(img, 0, 0);
+//           break;
+//       case 1:
+//           canvas.width = height;
+//           canvas.height = width;
+//           ctx.rotate(degree);
+//           ctx.drawImage(img, 0, -height);
+//           break;
+//       case 2:
+//           canvas.width = width;
+//           canvas.height = height;
+//           ctx.rotate(degree);
+//           ctx.drawImage(img, -width, -height);
+//           break;
+//       case 3:
+//           // canvas.width = height;
+//           // canvas.height = width;
+//           ctx.rotate(degree);
+//           ctx.drawImage(img, -width, 0);
+//           break;
+//     }
+// }
+  </script>
+</body>
+</html>
