@@ -2,241 +2,398 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ECharts</title>
-    <!-- 引入ECharts -->
-    <!-- <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js"></script> -->
-    <!-- <script src="../js/echarts-all-3.js"></script> -->
-    <script src="../js/echarts.min.js"></script>
-    <script src="../js/echarts-gl.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECharts</title>
+  <!-- 引入ECharts -->
+  <!-- <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js"></script> -->
+  <!-- <script src="../js/echarts-all-3.js"></script> -->
+  <script src="../js/echarts.min.js"></script>
+  <script src="./js/echarts-wordcloud.js"></script>
+  <script src="../js/echarts-gl.min.js"></script>
 </head>
 
 <body>
-    <div id="main" style="width: 1000px;height:1000px;"></div>
-    <script type="module">
-        import geoJson from '../json/eChart/HK.js'
-        window.geoJson = geoJson
-    </script>
-    <script type="text/javascript">
-        window.onload = function () {
-            let geoJson = window.geoJson;
+  <div id="main" style="width: 590px; height: 171px;"></div>
+  <script type="module">
+    import geoJson from '../json/eChart/HK.js'
+    window.geoJson = geoJson
+  </script>
+  <script type="text/javascript">
+    function randomColor() {
+      return (
+        'rgb(' +
+        [
+          Math.round(Math.random() * 250),
+          Math.round(Math.random() * 250),
+          Math.round(Math.random() * 250)
+        ].join(',') +
+        ')'
+      )
+    }
 
-            // 基于准备好的dom，初始化echarts实例
-            window.myChart = echarts.init(document.getElementById('main'));
+    var wordData = [{
+      name: '社会保障',
+      value: 10000,
+    }, {
+      name: '道路设施',
+      value: 6181,
+    }, {
+      name: '市容市貌',
+      value: 4386,
+    }, {
+      name: '水利',
+      value: 4055,
+    }, {
+      name: '物业管理',
+      value: 2467,
+    }, {
+      name: '路况情况',
+      value: 2244,
+    }, {
+      name: '政务在线',
+      value: 1898,
+    }, {
+      name: '人工回访',
+      value: 1484,
+    }, {
+      name: '劳动纠纷',
+      value: 1112,
+    }, {
+      name: '教育政策',
+      value: 965,
+    }, {
+      name: '物价管理',
+      value: 847,
+    }, {
+      name: '环卫设施',
+      value: 582,
+    }, {
+      name: '噪声污染',
+      value: 555,
+    }, {
+      name: '通讯电力',
+      value: 550,
+    }, {
+      name: '房产交易',
+      value: 462,
+    }, {
+      name: '户政管理',
+      value: 366,
+    }, {
+      name: '企业服务',
+      value: 360,
+    }, {
+      name: '公积金服务',
+      value: 282,
+    }, {
+      name: '大气污染',
+      value: 273,
+    }, {
+      name: '劳动保障',
+      value: 265,
+    }]
+    window.onload = function () {
+      let geoJson = window.geoJson;
 
-            // myChart.showLoading();
+      // 基于准备好的dom，初始化echarts实例
+      window.myChart = echarts.init(document.getElementById('main'));
+
+      // myChart.showLoading();
 
 
-            // myChart.hideLoading();
+      // myChart.hideLoading();
 
-            
 
-            // legendselectchanged 点击事件
-            myChart.on('legendselectchanged', function (params) {
-                console.info('触发了点击事件', params)
-            })
-            //* 注册地图
-            echarts.registerMap('HK', geoJson);
 
-            // 使用刚指定的配置项和数据显示图表。
-            const option = getMapTest2By3D()
-            console.log(option);
-            myChart.setOption(option);
-        }
-      function getMapTest2By3D(echarts, geoJson) { //* 3D地图实现
-        var barData = [{
-          name: '太原市',
-          value: [
-            112.48699,
-            37.111,
-            12
-          ]
-        }]
-        
-        const option = {
-          title: {
-            text: '香港3D地图',
+      // legendselectchanged 点击事件
+      myChart.on('legendselectchanged', function (params) {
+        console.info('触发了点击事件', params)
+      })
+      //* 注册地图
+      echarts.registerMap('HK', geoJson);
+
+      // 使用刚指定的配置项和数据显示图表。
+      const option = wordcloudOption1()
+      console.log(option);
+      myChart.setOption(option);
+    }
+
+    function wordcloudOption1() {
+      return {
+        textStyle: {
+          normal: {
+            color: function () {
+              console.log('颜色');
+              return (
+                'rgb(' +
+                [
+                  Math.round(Math.random() * 250),
+                  Math.round(Math.random() * 250),
+                  Math.round(Math.random() * 250)
+                ].join(',') +
+                ')'
+              )
+            }
+          }
+        },
+        series: [
+          {
+            name: '热词',
+            type: 'wordCloud',
+            sizeRange: [15, 40], //大小
+            // rotationRange: [0, 90], // 旋转角度
+            rotationStep: 90,
+            shape: 'polygon',
             left: 'center',
-            top: 20
-          },
-          legend:{
-            show:true,
-            right:10,
-            top:10
-          },
-          tooltip:{
-            show:true,
-            formatter:function(params){
-              let value = params.data.value;
-              return params.seriesName + ':'+ value[2];
-            }
-          },
-          geo3D: {
-            map: 'HK',
-            boxWidth:50,
-            boxHeight:6,
-            boxDepth:90,
-            // environment: 'auto',
-            //鼠标旋转，缩放等视觉设置
-            viewControl: {
-              // center: [-10, 0, 10]
+            top: 'center',
+            width: '100%',
+            height: '100%',
+            textPadding: 0,
+            textStyle: {
+                color: function () {
+                  console.log('颜色');
+                  return (
+                    'rgb(' +
+                    [
+                      Math.round(Math.random() * 250),
+                      Math.round(Math.random() * 250),
+                      Math.round(Math.random() * 250)
+                    ].join(',') +
+                    ')'
+                  )
+                }
             },
-            //光源的设置
-            light: {
-              main: {
-                intensity: 1,
-                shadow: true,
-                alpha:150,
-                beta: 70
-              },
-              ambient: {
-                intensity: 0
+            data: wordData
+          }
+        ]
+      }
+    }
+
+    function worcloudOption() {
+      return {
+        title: {
+          text: '热词图'
+        },
+        series: [{
+          type: 'wordCloud',
+          gridSize: 20,
+          sizeRange: [12, 50],
+          rotationRange: [-90, 90],
+          shape: 'pentagon',
+          textStyle: {
+            normal: {
+              color: function () {
+                return 'rgb(' + [
+                  Math.round(Math.random() * 160),
+                  Math.round(Math.random() * 160),
+                  Math.round(Math.random() * 160)
+                ].join(',') + ') ';
               }
             },
-            //地面的背景颜色
-            groundPlane: {
-              show: true,
-              color:'transparent'
+            emphasis: {
+              shadowBlur: 10,
+              shadowColor: '#333'
+            }
+          },
+          data: wordData
+        }]
+      }
+    }
+
+    function getMapTest2By3D(echarts, geoJson) { //* 3D地图实现
+      var barData = [{
+        name: '太原市',
+        value: [
+          112.48699,
+          37.111,
+          12
+        ]
+      }]
+
+      const option = {
+        title: {
+          text: '香港3D地图',
+          left: 'center',
+          top: 20
+        },
+        legend: {
+          show: true,
+          right: 10,
+          top: 10
+        },
+        tooltip: {
+          show: true,
+          formatter: function (params) {
+            let value = params.data.value;
+            return params.seriesName + ':' + value[2];
+          }
+        },
+        geo3D: {
+          map: 'HK',
+          boxWidth: 50,
+          boxHeight: 6,
+          boxDepth: 90,
+          // environment: 'auto',
+          //鼠标旋转，缩放等视觉设置
+          viewControl: {
+            // center: [-10, 0, 10]
+          },
+          //光源的设置
+          light: {
+            main: {
+              intensity: 1,
+              shadow: true,
+              alpha: 150,
+              beta: 70
             },
-            //特效设置
-            postEffect: {
-              enable:false
+            ambient: {
+              intensity: 0
+            }
+          },
+          //地面的背景颜色
+          groundPlane: {
+            show: true,
+            color: 'transparent'
+          },
+          //特效设置
+          postEffect: {
+            enable: false
+          },
+          //标签样式
+          label: {
+            show: true,
+            formatter: function (params) {
+              var content = '',
+                content = params.name;
+              return content;
             },
-            //标签样式
+            distance: 0,
+            textStyle: {
+              color: '#ffffff',
+              fontWeight: 'normal',
+              fontSize: 12,
+              backgroundColor: 'rgba(255,255,255,0)'
+            },
+          },
+          //地图样式 ===》地图各省市区的颜色，边界
+          itemStyle: {
+            color: '#73a4ff',
+            borderColor: 'rgb(62,215,213)',
+            borderWidth: 1
+          },
+          //鼠标 hover 高亮时图形和标签的样式
+          emphasis: {
             label: {
-              show:true,
-              formatter:function(params){
-                var content='',
-                  content=params.name;
-                return content;
-              },
-              distance:0,
-              textStyle:{
-                color:'#ffffff',
-                fontWeight : 'normal',
-                fontSize :12,
-                backgroundColor: 'rgba(255,255,255,0)'
-              },
+              show: true,
+              distance: 10
             },
-            //地图样式 ===》地图各省市区的颜色，边界
             itemStyle: {
-              color:'#73a4ff',
-              borderColor: 'rgb(62,215,213)',
-              borderWidth: 1
-            },
-            //鼠标 hover 高亮时图形和标签的样式
-            emphasis:{
-              label:{
-                show:true,
-                distance:10
-              },
-              itemStyle: {
-                color:'#ffa8cc',
-              }
+              color: '#ffa8cc',
             }
+          }
 
 
-          },
+        },
 
-          // series: [
-          //   {
-          //     type: 'bar3D',
-          //     name:'某某柱状图',
-          //     coordinateSystem: 'geo3D',
-          //     itemStyle: {
-          //       color: 'red',
-          //       opacity: 1
-          //     },
-          //     emphasis:{
-          //       label:{
-          //         show:false,
-          //       }
-          //     },
-          //     data: barData,
-          //   }
-          // ]
-        };
-        return option
+        // series: [
+        //   {
+        //     type: 'bar3D',
+        //     name:'某某柱状图',
+        //     coordinateSystem: 'geo3D',
+        //     itemStyle: {
+        //       color: 'red',
+        //       opacity: 1
+        //     },
+        //     emphasis:{
+        //       label:{
+        //         show:false,
+        //       }
+        //     },
+        //     data: barData,
+        //   }
+        // ]
+      };
+      return option
+    }
+
+    function geoMapTest1() {
+
+      return option = {
+        title: {
+          text: '香港18区人口密度 （2011）',
+          subtext: '人口密度数据来自Wikipedia',
+          sublink: 'http://zh.wikipedia.org/wiki/%E9%A6%99%E6%B8%AF%E8%A1%8C%E6%94%BF%E5%8D%80%E5%8A%83#cite_note-12'
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}<br/>{c} (p / km2)'
+        },
+        visualMap: {
+          min: 800,
+          max: 50000,
+          text: ['High', 'Low'],
+          realtime: false,
+          calculable: true,
+          inRange: {
+            color: ['lightskyblue', 'yellow', 'orangered']
+          }
+        },
+        series: [
+          {
+            name: '香港18区人口密度',
+            type: 'map',
+            mapType: 'HK', // 自定义扩展图表类型
+            label: {
+              normal: {
+                show: true
+              }
+            },
+            data: [
+              { name: '中西区', value: 20057.34 },
+              { name: '湾仔', value: 15477.48 },
+              { name: '东区', value: 31686.1 },
+              { name: '南区', value: 6992.6 },
+              { name: '油尖旺', value: 44045.49 },
+              { name: '深水埗', value: 40689.64 },
+              { name: '九龙城', value: 37659.78 },
+              { name: '黄大仙', value: 45180.97 },
+              { name: '观塘', value: 55204.26 },
+              { name: '葵青', value: 21900.9 },
+              { name: '荃湾', value: 4918.26 },
+              { name: '屯门', value: 5881.84 },
+              { name: '元朗', value: 4178.01 },
+              { name: '北区', value: 2227.92 },
+              { name: '大埔', value: 2180.98 },
+              { name: '沙田', value: 9172.94 },
+              { name: '西贡', value: 3368 },
+              { name: '离岛', value: 806.98 }
+            ],
+            // 自定义名称映射
+            nameMap: {
+              'Central and Western': '中西区',
+              'Eastern': '东区',
+              'Islands': '离岛',
+              'Kowloon City': '九龙城',
+              'Kwai Tsing': '葵青',
+              'Kwun Tong': '观塘',
+              'North': '北区',
+              'Sai Kung': '西贡',
+              'Sha Tin': '沙田',
+              'Sham Shui Po': '深水埗',
+              'Southern': '南区',
+              'Tai Po': '大埔',
+              'Tsuen Wan': '荃湾',
+              'Tuen Mun': '屯门',
+              'Wan Chai': '湾仔',
+              'Wong Tai Sin': '黄大仙',
+              'Yau Tsim Mong': '油尖旺',
+              'Yuen Long': '元朗'
+            }
+          }
+        ]
       }
-
-      function geoMapTest1() {
-
-        return option = {
-            title: {
-                text: '香港18区人口密度 （2011）',
-                subtext: '人口密度数据来自Wikipedia',
-                sublink: 'http://zh.wikipedia.org/wiki/%E9%A6%99%E6%B8%AF%E8%A1%8C%E6%94%BF%E5%8D%80%E5%8A%83#cite_note-12'
-            },
-            tooltip: {
-                trigger: 'item',
-                formatter: '{b}<br/>{c} (p / km2)'
-            },
-            visualMap: {
-                min: 800,
-                max: 50000,
-                text: ['High', 'Low'],
-                realtime: false,
-                calculable: true,
-                inRange: {
-                    color: ['lightskyblue', 'yellow', 'orangered']
-                }
-            },
-            series: [
-                {
-                    name: '香港18区人口密度',
-                    type: 'map',
-                    mapType: 'HK', // 自定义扩展图表类型
-                    label: {
-                        normal:{
-                            show: true
-                        }
-                    },
-                    data: [
-                        { name: '中西区', value: 20057.34 },
-                        { name: '湾仔', value: 15477.48 },
-                        { name: '东区', value: 31686.1 },
-                        { name: '南区', value: 6992.6 },
-                        { name: '油尖旺', value: 44045.49 },
-                        { name: '深水埗', value: 40689.64 },
-                        { name: '九龙城', value: 37659.78 },
-                        { name: '黄大仙', value: 45180.97 },
-                        { name: '观塘', value: 55204.26 },
-                        { name: '葵青', value: 21900.9 },
-                        { name: '荃湾', value: 4918.26 },
-                        { name: '屯门', value: 5881.84 },
-                        { name: '元朗', value: 4178.01 },
-                        { name: '北区', value: 2227.92 },
-                        { name: '大埔', value: 2180.98 },
-                        { name: '沙田', value: 9172.94 },
-                        { name: '西贡', value: 3368 },
-                        { name: '离岛', value: 806.98 }
-                    ],
-                    // 自定义名称映射
-                    nameMap: {
-                        'Central and Western': '中西区',
-                        'Eastern': '东区',
-                        'Islands': '离岛',
-                        'Kowloon City': '九龙城',
-                        'Kwai Tsing': '葵青',
-                        'Kwun Tong': '观塘',
-                        'North': '北区',
-                        'Sai Kung': '西贡',
-                        'Sha Tin': '沙田',
-                        'Sham Shui Po': '深水埗',
-                        'Southern': '南区',
-                        'Tai Po': '大埔',
-                        'Tsuen Wan': '荃湾',
-                        'Tuen Mun': '屯门',
-                        'Wan Chai': '湾仔',
-                        'Wong Tai Sin': '黄大仙',
-                        'Yau Tsim Mong': '油尖旺',
-                        'Yuen Long': '元朗'
-                    }
-                }
-            ]
-        }
-      }
+    }
 
       //   var option = {
       //   // 光标移动显示的内容
@@ -633,7 +790,7 @@
         // // 触发上传文件
         // input.click()
 
-    </script>
+  </script>
 </body>
 
 </html>
