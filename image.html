@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image</title>
+</head>
+
+<body>
+    <script src="../js/axios.js"></script>
+    <script>
+        let url = "https://dss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2534506313,1688529724&fm=26&gp=0.jpg"
+
+        // 图片url转为base64
+        function urlToBase64(url) {
+            return new Promise((resolve, reject) => {
+                let img = new Image(), type = 'image/png'
+                img.src = url;
+                img.crossOrigin = 'Anonymous';
+                img.onload = function () {
+                    resolve(imageToCanvasData(this, type));
+                    // resolve(this)
+                }
+            })
+        }
+
+        // 图片转为base64
+        function imageToCanvasData(image, type) {
+            let canvas = document.createElement('canvas'),
+                ctx = canvas.getContext('2d')
+
+            canvas.height = image.height
+            canvas.width = image.width
+            ctx.drawImage(image, 0, 0)
+
+            var dataURL = canvas.toDataURL(type)
+
+            return dataURL
+        }
+
+        // base64转为文件对象
+        function dataURLToFile(dataurl,filename){
+            var arr = dataurl.split(","), // 切割 base64格式头和文件数据
+            mime = arr[0].match(/:(.*?);/)[1], // 获取文件类型
+            bstr = atob(arr[1]), // 文件数据
+            n = bstr.length,
+            u8arr = new Uint8Array(n); // 转文件数据
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new File([u8arr], filename, { type: mime });
+        }
+
+        urlToBase64(url).then((value) => {
+            let formdata = new FormData()
+            formdata.append('file',dataURLToFile(value,"aa.jpg"))
+            axios({
+                url:"http://192.168.31.158:8099/file/upload",
+                data: formdata,
+                method: 'post'
+            })
+        })
+    </script>
+</body>
+
+</html>

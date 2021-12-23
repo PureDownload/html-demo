@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    test2
+    <script>
+        window.onload = function() {
+            var BroadcastChanne1 = new BroadcastChannel('load1');//要接收到数据，BroadcastChannel对象的名字必须相同
+            BroadcastChanne1.onmessage = function(e){
+                console.log("test2"+e.data);//发送的数据
+            }
+        }
+    </script>
+</body>
+</html>

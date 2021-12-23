@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频截图</title>
+</head>
+<body>
+    <video id="video" src="../video/movie.ogv" controls="controls">
+        your browser does not support the video tag
+    </video>
+    <button id="btn1" onclick="captureVideo()">视频截图</button>
+    <button onclick="capture()">全屏截图</button>
+    <script type="text/javascript" src="../js/jqueyr-3.5.1.min.js"></script>
+    <script type="text/javascript" src="http://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+    <script>
+        let video = document.getElementById("video");
+        let canvas = document.createElement("canvas");
+        let img = document.createElement("img");
+        
+        let ctx = canvas.getContext("2d");
+        function captureVideo() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            img.setAttribute("crossOrigin",'Anonymous')
+            img.src = canvas.toDataURL();
+            document.body.append(img);
+        }
+
+        function capture() {
+            console.info('截图')
+            html2canvas(document.getElementById('video'),{useCORS:true})
+            .then((canvas) => {
+                console.info('进来')
+                canvas.id = "mycanvas";
+                //document.body.appendChild(canvas);
+                //生成base64图片数据
+                var dataUrl = canvas.toDataURL();
+                var newImg = document.createElement("img");
+                newImg.src =  dataUrl;
+                document.body.appendChild(newImg);
+            })
+        }
+    </script>
+</body>
+</html>

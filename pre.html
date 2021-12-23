@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form method="POST" action="http://localhost:8080/test">
+        <textarea name="name" id="text"></textarea>
+        <button type="submit">提交</button>
+    </form>
+
+    <button onclick="set()">click</button>
+    <pre id="pre"></pre>
+    <script src="/js/axios.js"></script>
+    <script src="/js/jqueyr-3.5.1.min.js"></script>
+    <script>
+        function set(){
+            let textEl = document.getElementById('text')
+            let preEl = document.getElementById('pre')
+
+            preEl.innerText = textEl.value
+            axios.post("http://localhost:8080/test",{
+                name:textEl.value
+            })
+            $.ajax('http://localhost:8080/test',{
+                    method:'post',
+                    data:JSON.stringify({name:textEl.value}),
+                    type:'POST',
+                    dataType:'json',
+                    contentType:'application/json',
+                })
+        }
+        axios.post("http://localhost:8099/test",{name:'admin' ,password: 'password'})
+        // $.ajax('http://localhost:8099/test',{
+        //     method:'post',
+        //     data:JSON.stringify({name:'admin' ,password: 'password'}),
+        //     type:'POST',
+        //     dataType:'json',
+        //     contentType:'application/json',
+        // })
+    </script>
+</body>
+</html>

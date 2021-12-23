@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // 比例对象
+        let reportProportion = {
+        name: 5,
+        address: 1,
+        specificAddress: 1,
+        amount: 1,
+        sourceType: 0.5,
+        source: 0.5,
+        buyerType: 1,
+        biddingTime: 1,
+        signingTime: 1,
+        deliveryTime: 1,
+        completionTime: 1,
+        engineeringArea: 1,
+        payment: 1,
+        "dockingParty.name": 3,
+        "dockingParty.nature": 1,
+        "dockingParty.depotType": 1,
+        "access.userName": 1,
+        "access.position": 1,
+        "access.phone": 1,
+        "access.oarpiName": 1,
+        "access.oarpiPhone": 1,
+        "access.oarpiRelation": 1,
+        "demandVariety.mainmaterial.name": 2,
+        "demandVariety.mainmaterial.valuations": 1, 
+        "demandVariety.mainmaterial.demand": 1,
+        "demandVariety.secondaryMaterial.name": 1,
+        "competitor.name": 1,
+        "competitor.payment": 1,
+        "competitor.material.name": 1,
+        "competitor.material.valuations": 1,
+        "competitor.material.demand": 1,
+        "competitor.material.supplyMarket": 0.5,
+        "competitor.material.sort": 1,
+        "competitor.material.nature": 1
+      }
+      // 表单对象
+      let reportFrom = {
+        //业务员id
+        salesmanId: undefined,
+        //项目编号
+        pn: undefined,
+        proportion: undefined,
+        name: "undefined",
+        nickName: undefined,
+        address: [],
+        specificAddress: undefined,
+        //预估金额
+        amount: undefined,
+        //来源
+        // 0.其它 1.客户介绍 2.朋友介绍 3.自己开发 4.主动咨询
+        sourceType: 0,
+        source: {
+          //介绍方类型 0.个人 1.公司
+          type: 0,
+          desc: undefined
+        },
+        //采购方式 0.甲供 1.甲指乙供 2.供应方 3.其它
+        buyerType: undefined,
+        //采购方式 备注
+        buyerDesc: undefined,
+        //预计招标时间
+        biddingTime: undefined,
+        // 预计签合同时间
+        signingTime: undefined,
+        //预计供货时间
+        deliveryTime: undefined,
+        //预计完工时间
+        completionTime: undefined,
+        //工程区域字段
+        engineeringArea: undefined,
+        //付款方式
+        payment: {
+          //预付全款
+          totalPayment: undefined,
+          //首付款
+          downPayment: {
+            amount: undefined,
+            // 0.金额 1.比例
+            type: 0
+          },
+          //进度款
+          signInPayment: {
+            // 0.按批次 1.按供货时间段 2.按出货金额
+            type: 0,
+            // 详情
+            desc: undefined
+          },
+          //尾款
+          retainage: {
+            amount: undefined,
+            // 0.全款 1.比例 2.15个工作日
+            type: 0
+          },
+          //定金
+          deposit: {
+            amount: undefined,
+            // 0.金额 1.比例
+            type: 0,
+            time: undefined,
+            timeQuantum: undefined
+          },
+          //其它
+          orderDesc: undefined
+        },
+        //需求品种
+        demandVariety: {
+          mainmaterial: [],
+          secondaryMaterial: []
+        },
+        //业主方信息
+        ownerList: [
+          {
+            id: undefined,
+            name: undefined,
+            //对接人信息
+            accessList: [],
+            //性质
+            nature: {
+              id: undefined,
+              name: undefined,
+              // 0.无代建方 1.代建方 2.投资方
+              type: 0,
+              accessList: []
+            },
+            //入库类别 0.未入库 1.A类 2.B类
+            depotType: 0,
+            isDocking: false
+          }
+        ],
+        //设计方信息
+        designerList: [
+          {
+            id: undefined,
+            name: undefined,
+            accessList: [],
+            nature: {
+              id: undefined,
+              name: undefined,
+              // 1.方案 2.深化
+              type: "1",
+              accessList: []
+            },
+            //主要材料
+            mainmaterial: [],
+            //次要材料
+            secondaryMaterial: [],
+            depotType: 0,
+            isDocking: false
+          }
+        ],
+        //施工方信息
+        constructionList: [
+          {
+            id: undefined,
+            name: undefined,
+            accessList: [],
+            //进度 0.流标 1.投标 2.中标
+            schedule: "0",
+            depotType: 0,
+            isDocking: false
+          }
+        ],
+        //竞争对手信息
+        competitorsList: [
+          {
+            name: undefined,
+            //注册资金
+            registeredCapital: undefined,
+            address: undefined,
+            //材料
+            material: [],
+            payment: {
+              isDownPay: false,
+              isTotalPay: false,
+              isSignInPay: false,
+              isRetainage: false,
+              isDeposit: false,
+              isOrderDesc: false,
+              totalPayment: undefined,
+              downPayment: {
+                amount: undefined,
+                type: 0
+              },
+              signInPayment: {
+                type: 0,
+                desc: undefined
+              },
+              retainage: {
+                amount: undefined,
+                type: 0
+              },
+              deposit: {
+                amount: undefined,
+                type: 0,
+                time: undefined,
+                timeQuantum: undefined
+              },
+              orderDesc: undefined
+            }
+          }
+        ]
+      }
+      let count = 0;
+      function getCount(obj){
+        if(obj){
+            if(obj instanceof Array){
+                obj.forEach(i => {
+                    if(typeof i === 'object'){
+                        getCount(i)
+                    }
+                })
+            } else if(obj instanceof Object) {
+                for(let key in obj){
+                    if(typeof obj[key] === 'object'){
+                        getCount(obj[key])
+                    } else {
+                        obj[key] && (count += reportProportion[key] ? reportProportion[key] : 0)
+                    }
+                }
+            }
+        }
+      }
+      getCount(reportFrom)
+      console.info(count)
+    </script>
+</body>
+</html>

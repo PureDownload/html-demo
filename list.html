@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        body{
+            font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+        }
+        html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+            margin: 0; 
+            padding: 0; 
+            border: 0; 
+            font: inherit; 
+            font-size: 100%;
+            vertical-align: baseline;
+        }
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+            margin-bottom: 0.5rem;
+            font-family: inherit;
+            font-weight: 500;
+            line-height: 1.2;
+            color: inherit;
+        }
+        p{
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col, .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm, .col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md, .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg, .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl, .col-xl-auto {
+            position: relative;
+            width: 100%;
+            min-height: 1px;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        body{
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+        }
+        .content{
+            padding: 20px;
+            text-align: center;
+        }
+        h3{
+            font-size:  1.7rem;
+        }
+        .left{
+            text-align: left;
+        }
+        .row{
+            display: flex;
+            margin-left: -15px;
+            margin-right: -15px;
+            flex-wrap: wrap;
+        }
+        .col-md-12{
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        .col-sm-6 {
+            box-sizing: border-box;
+            -webkit-box-flex: 0;
+            -ms-flex: 0 0 50%;
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+        .unity_uuid {
+            width: 95%;
+            text-align: right;
+        }
+        .table-b{
+            font-size: 14px;
+        }
+        .table-bordered {
+            border: 1px solid #dee2e6;
+            border-collapse: collapse
+        }
+        .table {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 1rem;
+            background-color: transparent;
+        }
+        .table-bordered th, .table-bordered td {
+            border: 1px solid #dee2e6;
+            border-collapse: collapse
+        }
+        .table th, .table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border: 1px solid #dee2e6;
+            border-collapse: collapse
+        }
+        .text-left {
+            text-align: left !important;
+        }
+        .title{
+            font-size: 18px;
+        }
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <div class="action" v-show="actionState == 'action'">
+            <h1 style="font-size: 30px; font-weight: 500;">海口查档机操作页面</h1>
+            <div class="content">
+                <div class="insertForm">
+                    <div class="title text-left">新增:</div>
+                    <el-table
+                        :data="insertUser"
+                        style="width: 100%">
+                        <el-table-column
+                            prop="recordId"
+                            label="查询编号"
+                            width="180">
+                            <template slot-scope="scope">
+                                <el-input v-model="scope.row.recordId"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            prop="name"
+                            label="姓名"
+                            width="180">
+                            <template slot-scope="scope">
+                                <el-input v-model="scope.row.customerName"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            prop="certificationType"
+                            label="身份证号">
+                            <template slot-scope="scope">
+                                <el-input v-model="scope.row.certificationNum"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            prop="cardType"
+                            label="身份证类型">
+                            <template slot-scope="scope">
+                                <el-input v-model="scope.row.certificationType"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            prop="record"
+                            label="备案情况">
+                            <template slot-scope="scope">
+                                <el-input v-model="scope.row.recordNum"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                            prop="explain"
+                            label="说明">
+                            <template slot-scope="scope">
+                                <el-input type="textarea" v-model="scope.row.description"></el-input>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                                <el-button size="mini" type="primary" @click="insert">新增</el-button>
+                                <el-button size="mini" @click="resetUser(scope.$index, scope.row)">重置</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <!-- <el-form ref="insertForm" :model="insertUser" label-width="100px">
+                        <el-row>
+                            <el-col :span="8">
+                                <el-form-item label="查询编号:">
+                                    <el-input v-model="insertUser.queryCode"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-form-item label="姓名:">
+                                    <el-input v-model="insertUser.name"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-form-item label="身份证号:">
+                                    <el-input v-model="insertUser.cardNumber"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="8">
+                                <el-form-item label="身份证类型:">
+                                    <el-input v-model="insertUser.cardType"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-form-item label="备案情况:">
+                                    <el-input v-model="insertUser.record"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="8">
+                                <el-form-item label="说明:">
+                                    <el-input type="textarea" v-model="insertUser.explain"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-form-item>
+                            <el-button type="primary" @click="insert">新增</el-button>
+                            <el-button @click="insertUser={
+                                queryCode:'',
+                                name:'',
+                                cardNumber:'',
+                                cardType:'',
+                                record:'',
+                                explain:''
+                            }">重置</el-button>
+                        </el-form-item>
+                    </el-form> -->
+                </div>
+                <div class="query">
+                    <div class="title text-left">
+                        查询:
+                    </div>
+                    <el-row>
+                        <el-col :span="3">
+                            <el-input v-model="queryCode"></el-input>
+                        </el-col>
+                        <el-col :span="1">
+                            <el-button type="primary" @click="query">查询</el-button>
+                        </el-col>
+                    </el-row>
+                </div>
+                <div class="table">
+                    <div class="title text-left">条目列表:</div>
+                    <el-table
+                        :data="tableData"
+                        style="width: 100%">
+                        <el-table-column
+                            prop="recordId"
+                            label="查询编号"
+                            width="180">
+                        </el-table-column>
+                        <el-table-column
+                            prop="customerName"
+                            label="姓名"
+                            width="180">
+                        </el-table-column>
+                        <el-table-column
+                            prop="certificationNum"
+                            label="身份证号">
+                        </el-table-column>
+                        <el-table-column
+                            prop="certificationType"
+                            label="身份证类型">
+                        </el-table-column>
+                        <el-table-column
+                            prop="recordNum"
+                            label="备案情况">
+                        </el-table-column>
+                        <el-table-column
+                            prop="description"
+                            label="说明">
+                            <template slot-scope="scope">
+                                <pre>{{scope.row.description}}</pre>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作">
+                            <template slot-scope="scope">
+                            <el-button
+                                size="mini"
+                                @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                            <el-button
+                                size="mini"
+                                type="danger"
+                                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                                <el-button
+                                size="mini"
+                                type="danger"
+                                @click="handlePrint(scope.$index, scope.row)">打印</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                <el-dialog
+                        title="修改备案信息"
+                        :visible.sync="showDialog"
+                        width="30%"
+                >
+                    <div class="updateForm">
+                        <el-form ref="updateForm" :model="updateUser" label-width="100px">
+                            <el-form-item label="查询编号:">
+                                <el-input v-model="updateUser.recordId"></el-input>
+                            </el-form-item>
+                            <el-form-item label="姓名:">
+                                <el-input v-model="updateUser.customerName"></el-input>
+                            </el-form-item>
+                            <el-form-item label="身份证号:">
+                                <el-input v-model="updateUser.certificationNum"></el-input>
+                            </el-form-item>
+                            <el-form-item label="身份证类型:">
+                                <el-input v-model="updateUser.certificationType"></el-input>
+                            </el-form-item>
+                            <el-form-item label="备案情况:">
+                                <el-input v-model="updateUser.recordNum"></el-input>
+                            </el-form-item>
+                            <el-form-item label="说明:">
+                                <el-input type="textarea" v-model="updateUser.description"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="update">修改</el-button>
+                                <!-- <el-button @click="updateUser={
+                                    queryCode:'',
+                                    name:'',
+                                    cardNumber:'',
+                                    cardType:'',
+                                    record:'',
+                                    explain:''
+                                }">重置</el-button> -->
+                                <el-button @click="showDialog = false
+                                ">取消</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </div>
+                </el-dialog>
+            </div>
+        </div>
+        <!-- certificationNum: "441541199008062312"
+                        certificationType: "身份证"
+                        customerName: null
+                        description: "1.我也不知道说啥，就这样吧"
+                        recordId: 19921
+                        recordNum: 100
+                        uuid: null -->
+        <div class="print" v-show="actionState == 'print'">
+            <div class="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3>海南省住房合同备案证明</h3>
+                        <p class="left">该申请户居民家庭在我省住房备案情况如下：</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <p class="left">申请人信息</p>
+                    </div>
+                    <div class="col-sm-6"><p class="unity_uuid">统一查询编号：{{printObj.recordId}}</p></div>
+                </div>
+                <div class="table-b">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th colspan="3">姓名</th>
+                                <th colspan="3">证件类型</th>
+                                <th colspan="4">证件号码</th>
+                                <th colspan="2">备案情况（套）</th>
+                            </tr>
+                            <tr>
+                                <td colspan="3">{{printObj.customerName}}</td>
+                                <td colspan="3">{{printObj.certificationNum}}</td>
+                                <td colspan="4">{{printObj.certificationType}}</td>
+                                <td colspan="2">{{printObj.recordNum}}套</td>
+                            </tr>
+                            <tr class="text-left">
+                                <td colspan="12">
+                                    <pre>{{printObj.description}}</pre>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        // 说明 
+        // 1、查询结果存在异议的请申请异议复审。
+        // 2、申请人应承诺提供的家庭成员信息(夫妻双方及未成年子女)真实有效;如有不实，申请 人承担一切责任。
+        // 3、本查询只针对全省住房(含普通住宅、高档公寓、低层住宅、酒店式公寓和产权式酒店 )合同备案。
+        // 4、注意:请保持二维码区域整洁，请勿对折二维码以保证设备正常读取。证明开具单位(盖章) 证明开具时间:2020-04-03 16:42:55
+        let resetUser = {
+                    certificationNum: "",
+                    certificationType: "",
+                    customerName: "",
+                    description: "",
+                    recordId: "",
+                    recordNum: "",
+                    uuid: ""
+                }
+        // 模拟测试
+        let data = [{
+                    queryCode:'1',
+                    name:'admin',
+                    cardNumber:'1234',
+                    cardType:'身份证',
+                    record:'0',
+                    explain:'说明'
+                }]
+        var app = new Vue({
+            el: '#app',
+            data:{
+                queryCode: '',
+                actionState: 'action',
+                // 可考虑耦合成一个 但不方便维护
+                insertUser:[{
+                    certificationNum: "",
+                    certificationType: "",
+                    customerName: "",
+                    description: "",
+                    recordId: "",
+                    recordNum: "",
+                    uuid: ""
+                }],
+                updateUser:{
+                    certificationNum: "",
+                    certificationType: "",
+                    customerName: "",
+                    description: "",
+                    recordId: "",
+                    recordNum: "",
+                    uuid: ""
+                },
+                printUser:{
+                    certificationNum: "",
+                    certificationType: "",
+                    customerName: "",
+                    description: "",
+                    recordId: "",
+                    recordNum: "",
+                    uuid: ""
+                },
+                showDialog: false,
+                tableData:[],
+                printObj:{}
+            },
+            // [{name:'admin'}]
+            methods:{
+                query(){
+                    // if(this.queryCode.trim().length === 0) return;
+                    // this.tableData = data.filter((v) => {
+                    //     return v.queryCode === this.queryCode
+                    // })
+                    this.getList(this.queryCode)
+                },
+                handleEdit(index,row){
+                    this.updateUser = row;
+                    this.showDialog = true;
+                },
+                handleDelete(index,row){
+                    axios.delete(`http://192.168.31.202:8080/records/${row.uuid}`).then((res) => {
+                        if(res.data.code == 200){
+                            this.getList(this.queryCode)
+                        }
+                    })
+                    // data = data.filter(v => {
+                    //     return v.queryCode != row.queryCode
+                    // });
+                    // this.getList()
+                },
+                handlePrint(index,row){
+                    this.printObj = row;
+                    this.actionState = 'print';
+                    this.$nextTick(() => {
+                        window.print()
+                    });
+                },
+                afterPrint(){
+                    this.actionState = 'action'
+                    this.printObj = {}
+                },
+                insert(){
+                    axios.post('http://192.168.31.202:8080/records',this.insertUser[0]).then((res) => {
+                        if(res.data.code == 200){
+                            this.getList(this.queryCode)
+                            this.resetUser(0)
+                        }
+                    }).catch((error) => {
+                        console.info(error)
+                    })
+                    // data.push(JSON.parse(JSON.stringify(this.insertUser[0])))
+                    // this.getList()
+                    // this.resetUser(0)
+                },
+                update(){
+                    axios.put('http://192.168.31.202:8080/records',this.updateUser).then((res) => {
+                        if(res.data.code == 200){
+                            this.getList(this.queryCode)
+                            this.updateUser = JSON.parse(JSON.stringify(resetUser))
+                            this.showDialog = false
+                        }
+                    })
+                    // data.forEach(v => {
+                    //     if(v.queryCode == this.updateUser.queryCode){
+                    //         v = JSON.parse(JSON.stringify(this.updateUser))
+                    //     }
+                    // });
+                    // this.getList()
+                    // this.updateUser = JSON.parse(JSON.stringify(resetUser))
+                    // this.showDialog = false
+                },
+                getList(params = ""){
+                    axios.get(`http://192.168.31.202:8080/records/searchRecords?keyword=${params}`).then((res) => {
+                        if(res.data.code === 200){
+                            this.tableData = res.data.data;
+                        }
+                    })
+                    // this.tableData = data
+                },
+                resetUser(index,row){
+                    this.insertUser.splice(index, 1,JSON.parse(JSON.stringify(resetUser)))
+                }
+            },
+            created(){
+                window.addEventListener('afterprint',this.afterPrint)
+                this.getList()
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="../css/jsmind.css" />
+        <script type="text/javascript" src="../js/jsmind.js"></script>
+        
+        <script type="text/javascript" src="../js/jsmind.draggable.js"></script>
+       
+    </head>
+    <body>
+        <div id="jsmind_container"></div>
+
+        <script type="text/javascript">
+            var mind = {
+                // 3 data format supported ...
+                // see Documents for more information
+            };
+            var options = {
+                container:'jsmind_container',
+                editable:true,
+                theme:'orange'
+            };
+            var jm = new jsMind(options);
+            jm.show(mind);
+        </script>
+    </body>
+</html>

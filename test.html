@@ -2,24 +2,213 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Test</title>
 </head>
 <body>
-    <div>aabbbb</div>
+    <script>
+        let p1 = new Promise((resolve) => {
+            setTimeout(() => {
+                console.log('进来')
+                resolve(1)
+            },1001)
+        })
+        let p2 = new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(2)
+            },1002)
+        })
+        let p3 = new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(3)
+            },1003)
+        })
+        let p4 = new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(4)
+            },1004)
+        })
+        let p5 = new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(5)
+            },1005)
+        })
+
+        let promises = []
+        promises.push(p3)
+        promises.push(p1)
+        promises.push(p2)
+        promises.push(p4)
+        promises.push(p5)
+
+        Promise.all(promises)
+        .then((val) => {
+            console.log(val, 'val')
+        })
+
+        // var func = (function(a) {
+        //     this.a = a;
+        //     return function(a) {
+        //         a+=this.a;
+        //         return a;
+        //     }
+        // })(function(a,b){
+        //     return a;
+        // }(3,5))
+        // console.log(func(7))
+        // setTimeout(function(){
+        //     console.log(1)
+        // })
+        // new Promise(function executor(resolve) {
+        //     console.log(2)
+        //     for(var i = 0;i<10000;i++){
+        //         i == 9999 && resolve()
+        //     }
+        //     console.log(3);
+        // }).then(function() {
+        //     console.log(4)
+        // })
+        // console.log(5)
+        // 防抖函数
+        // function shake(){
+        //     // bool false = 两秒钟之内没有人点击 true = 有人点击过了
+        //     let bool = false;
+        //     let count = 0
+
+        //     return function(){
+        //         // 如果false则证明没人点击 进去执行 true则证明有人点击 不执行代码
+        //         if(bool){return}
+        //         // 进来证明有人点击 换为true
+        //         bool = true
+        //         setTimeout(() => {
+        //             // 两秒钟过去了 改为没有人点击
+        //             bool = false
+        //             count++
+        //             console.info(count)
+        //         },2000)
+        //     }
+        // }
+        // let shakeFun = shake();
+        // // 模拟触发 模拟每两百毫秒触发一次
+        // setInterval(() => {
+        //     shakeFun();
+        // },200)
+        // var a = 0,b = 0;
+        // function A(a) {
+        //     A = function(){
+        //         console.log( a + b++)
+        //     }
+        //     console.info(a++)
+        // }
+        // A(1) // 1
+        // A(2) // 2
+        // console.info(a)
+        // var a = 0,  
+        //     b = 0;
+        // function A(a) {
+        //     A = function (b) {
+        //         console.log(a + b++)
+        //     }
+        //     console.log(a++)
+        // }
+        // A(1)
+        // A(2)
+        // console.info(a)
+        // push 根据length属性来添加到最后 没有指定length属性则会添加一个length为0的属性
+        // var obj = {
+        //     "5" : 3,
+        //     "6" : 4,
+        //     "length" : 2,
+        //     "splice": Array.prototype.splice,
+        //     "push" : Array.prototype.push
+        // }
+        // obj.push(1)
+        // // obj.push(2)
+        // console.log(obj)
+        
+        // 非匿名自执行函数函数名不可以修改 严格模式下回TypeError 非严格模式下不报错，但是修改也没有错
+        // var b = 10;
+        // (function b(){
+        //     // 'use strict'
+        //     b = 20
+        //     console.log(window.b,b)
+        //     console.log(b)
+        // })()
+
+        // var b = 10;
+        // (function b(){
+        //     console.log(b)
+        //     b = 5
+        //     console.log(window.b)
+        //     var b = 20
+        //     console.log(b)
+        // })()
+
+        // var 存在变量提升
+        // var name = 'World!';
+        // (function () {
+        //     if (typeof name === 'undefined') {
+        //         var name = 'Jack';
+        //         console.log('Goodbye ' + name);
+        //     } else {
+        //         console.log('Hello ' + name);
+        //     }
+        // })();
+
+        // var str = 'World!';   
+        // (function (name) {
+        // if (typeof name === 'undefined') {
+        //     var name = 'Jack';
+        //     console.log('Goodbye ' + name);
+        // } else {
+        //     console.log('Hello ' + name);
+        // }
+        // })(str);
+        // 答案：Hello World 因为name已经变成函数内局部变量
+
+
+        // 在 JS 里, Math.pow(2, 53) == 9007199254740992 是可以表示的最大值. 最大值加一还是最大值. 所以循环不会停.
+        // var END = Math.pow(2, 53);
+        // var START = END - 100;
+        // var count = 0;
+        // for (var i = START; i <= END; i++) {
+        //     count++;
+        // }
+        // console.log(count);
+
+        // 稀疏数组 和 密集数组
+        // 创建一个密集数组
+        // var a = Array.apply(null,Array(3))
+        // a.forEach((i) => {
+        //     console.info('可以访问里面的空值',i)
+        // })
+
+        // // 创建一个工具类
+        // function range(val){
+        //     return Array.apply(null, Array(val)).map(Function.prototype.call.bind(Number))
+        // }
+        // console.info(range(100))
+    </script>
+<!--     
     <script>
         
-        for(let i = 0;i<3;i++){
-            let i = 0;
+        console.log(person)
+    
+        console.log(fun)
+    
+        // var person = "Eric";
+    
+        console.log(person)
+    
+        function fun() {
+            console.log(person)
+            var person = "Tom";
+            console.log(person)
         }
-        {
-            let i = 1;
-        }
-        {
-            let i = 2;
-        }
-        // console.log(i);
-    </script>
+    
+        fun()
+    
+        console.log(person)
+    </script> -->
 </body>
 </html>

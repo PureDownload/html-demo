@@ -1,0 +1,11 @@
+body {
+    width: 10px;
+    position: relative;
+}
+#div {
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+    border-radius: 99px;
+    position: absolute;
+}

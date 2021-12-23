@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>star</title>
+    <link rel="stylesheet/less" type="text/css" href="../less/star.less" />
+    <script src="../js/less.min.js"></script>
+</head>
+<body>
+    <div>
+        <div id="start1"></div>
+        <!-- <div id="start2"></div>
+        <div id="start3"></div> -->
+        <!-- <div id="start4"></div> -->
+        <!-- <div id="start5"></div>
+        <div id="start6"></div> -->
+    </div>
+    <script>
+        let start1El = document.getElementById("start1");
+        for(let i = 0;i<200;i++){
+            let el = document.createElement("div");
+            el.className = "start";
+            el.style.boxShadow = Math.round(Math.random() *  2000) + 'px' + ' ' +Math.round(Math.random() *  2000) + 'px #FFF' ;
+            start1El.appendChild(el);
+        }
+    </script>
+</body>
+</html>

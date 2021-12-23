@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECharts</title>
+  <!-- 引入ECharts -->
+  <!-- <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts-all-3.js"></script> -->
+  <!-- <script src="../js/echarts-all-3.js"></script> -->
+  <script src="../js/echarts.min.js"></script>
+  <script src="./js/echarts-wordcloud.js"></script>
+  <script src="../js/echarts-gl.min.js"></script>
+</head>
+
+<body>
+  <div id="main" style="width: 590px; height: 171px;"></div>
+  <script type="module">
+    import geoJson from '../json/eChart/HK.js'
+    window.geoJson = geoJson
+  </script>
+  <script type="text/javascript">
+    function randomColor() {
+      return (
+        'rgb(' +
+        [
+          Math.round(Math.random() * 250),
+          Math.round(Math.random() * 250),
+          Math.round(Math.random() * 250)
+        ].join(',') +
+        ')'
+      )
+    }
+
+    var wordData = [{
+      name: '社会保障',
+      value: 10000,
+    }, {
+      name: '道路设施',
+      value: 6181,
+    }, {
+      name: '市容市貌',
+      value: 4386,
+    }, {
+      name: '水利',
+      value: 4055,
+    }, {
+      name: '物业管理',
+      value: 2467,
+    }, {
+      name: '路况情况',
+      value: 2244,
+    }, {
+      name: '政务在线',
+      value: 1898,
+    }, {
+      name: '人工回访',
+      value: 1484,
+    }, {
+      name: '劳动纠纷',
+      value: 1112,
+    }, {
+      name: '教育政策',
+      value: 965,
+    }, {
+      name: '物价管理',
+      value: 847,
+    }, {
+      name: '环卫设施',
+      value: 582,
+    }, {
+      name: '噪声污染',
+      value: 555,
+    }, {
+      name: '通讯电力',
+      value: 550,
+    }, {
+      name: '房产交易',
+      value: 462,
+    }, {
+      name: '户政管理',
+      value: 366,
+    }, {
+      name: '企业服务',
+      value: 360,
+    }, {
+      name: '公积金服务',
+      value: 282,
+    }, {
+      name: '大气污染',
+      value: 273,
+    }, {
+      name: '劳动保障',
+      value: 265,
+    }]
+    window.onload = function () {
+      let geoJson = window.geoJson;
+
+      // 基于准备好的dom，初始化echarts实例
+      window.myChart = echarts.init(document.getElementById('main'));
+
+      // myChart.showLoading();
+
+
+      // myChart.hideLoading();
+
+
+
+      // legendselectchanged 点击事件
+      myChart.on('legendselectchanged', function (params) {
+        console.info('触发了点击事件', params)
+      })
+      //* 注册地图
+      echarts.registerMap('HK', geoJson);
+
+      // 使用刚指定的配置项和数据显示图表。
+      const option = wordcloudOption1()
+      console.log(option);
+      myChart.setOption(option);
+    }
+
+    function wordcloudOption1() {
+      return {
+        textStyle: {
+          normal: {
+            color: function () {
+              console.log('颜色');
+              return (
+                'rgb(' +
+                [
+                  Math.round(Math.random() * 250),
+                  Math.round(Math.random() * 250),
+                  Math.round(Math.random() * 250)
+                ].join(',') +
+                ')'
+              )
+            }
+          }
+        },
+        series: [
+          {
+            name: '热词',
+            type: 'wordCloud',
+            sizeRange: [15, 40], //大小
+            // rotationRange: [0, 90], // 旋转角度
+            rotationStep: 90,
+            shape: 'polygon',
+            left: 'center',
+            top: 'center',
+            width: '100%',
+            height: '100%',
+            textPadding: 0,
+            textStyle: {
+                color: function () {
+                  console.log('颜色');
+                  return (
+                    'rgb(' +
+                    [
+                      Math.round(Math.random() * 250),
+                      Math.round(Math.random() * 250),
+                      Math.round(Math.random() * 250)
+                    ].join(',') +
+                    ')'
+                  )
+                }
+            },
+            data: wordData
+          }
+        ]
+      }
+    }
+
+    function worcloudOption() {
+      return {
+        title: {
+          text: '热词图'
+        },
+        series: [{
+          type: 'wordCloud',
+          gridSize: 20,
+          sizeRange: [12, 50],
+          rotationRange: [-90, 90],
+          shape: 'pentagon',
+          textStyle: {
+            normal: {
+              color: function () {
+                return 'rgb(' + [
+                  Math.round(Math.random() * 160),
+                  Math.round(Math.random() * 160),
+                  Math.round(Math.random() * 160)
+                ].join(',') + ') ';
+              }
+            },
+            emphasis: {
+              shadowBlur: 10,
+              shadowColor: '#333'
+            }
+          },
+          data: wordData
+        }]
+      }
+    }
+
+    function getMapTest2By3D(echarts, geoJson) { //* 3D地图实现
+      var barData = [{
+        name: '太原市',
+        value: [
+          112.48699,
+          37.111,
+          12
+        ]
+      }]
+
+      const option = {
+        title: {
+          text: '香港3D地图',
+          left: 'center',
+          top: 20
+        },
+        legend: {
+          show: true,
+          right: 10,
+          top: 10
+        },
+        tooltip: {
+          show: true,
+          formatter: function (params) {
+            let value = params.data.value;
+            return params.seriesName + ':' + value[2];
+          }
+        },
+        geo3D: {
+          map: 'HK',
+          boxWidth: 50,
+          boxHeight: 6,
+          boxDepth: 90,
+          // environment: 'auto',
+          //鼠标旋转，缩放等视觉设置
+          viewControl: {
+            // center: [-10, 0, 10]
+          },
+          //光源的设置
+          light: {
+            main: {
+              intensity: 1,
+              shadow: true,
+              alpha: 150,
+              beta: 70
+            },
+            ambient: {
+              intensity: 0
+            }
+          },
+          //地面的背景颜色
+          groundPlane: {
+            show: true,
+            color: 'transparent'
+          },
+          //特效设置
+          postEffect: {
+            enable: false
+          },
+          //标签样式
+          label: {
+            show: true,
+            formatter: function (params) {
+              var content = '',
+                content = params.name;
+              return content;
+            },
+            distance: 0,
+            textStyle: {
+              color: '#ffffff',
+              fontWeight: 'normal',
+              fontSize: 12,
+              backgroundColor: 'rgba(255,255,255,0)'
+            },
+          },
+          //地图样式 ===》地图各省市区的颜色，边界
+          itemStyle: {
+            color: '#73a4ff',
+            borderColor: 'rgb(62,215,213)',
+            borderWidth: 1
+          },
+          //鼠标 hover 高亮时图形和标签的样式
+          emphasis: {
+            label: {
+              show: true,
+              distance: 10
+            },
+            itemStyle: {
+              color: '#ffa8cc',
+            }
+          }
+
+
+        },
+
+        // series: [
+        //   {
+        //     type: 'bar3D',
+        //     name:'某某柱状图',
+        //     coordinateSystem: 'geo3D',
+        //     itemStyle: {
+        //       color: 'red',
+        //       opacity: 1
+        //     },
+        //     emphasis:{
+        //       label:{
+        //         show:false,
+        //       }
+        //     },
+        //     data: barData,
+        //   }
+        // ]
+      };
+      return option
+    }
+
+    function geoMapTest1() {
+
+      return option = {
+        title: {
+          text: '香港18区人口密度 （2011）',
+          subtext: '人口密度数据来自Wikipedia',
+          sublink: 'http://zh.wikipedia.org/wiki/%E9%A6%99%E6%B8%AF%E8%A1%8C%E6%94%BF%E5%8D%80%E5%8A%83#cite_note-12'
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}<br/>{c} (p / km2)'
+        },
+        visualMap: {
+          min: 800,
+          max: 50000,
+          text: ['High', 'Low'],
+          realtime: false,
+          calculable: true,
+          inRange: {
+            color: ['lightskyblue', 'yellow', 'orangered']
+          }
+        },
+        series: [
+          {
+            name: '香港18区人口密度',
+            type: 'map',
+            mapType: 'HK', // 自定义扩展图表类型
+            label: {
+              normal: {
+                show: true
+              }
+            },
+            data: [
+              { name: '中西区', value: 20057.34 },
+              { name: '湾仔', value: 15477.48 },
+              { name: '东区', value: 31686.1 },
+              { name: '南区', value: 6992.6 },
+              { name: '油尖旺', value: 44045.49 },
+              { name: '深水埗', value: 40689.64 },
+              { name: '九龙城', value: 37659.78 },
+              { name: '黄大仙', value: 45180.97 },
+              { name: '观塘', value: 55204.26 },
+              { name: '葵青', value: 21900.9 },
+              { name: '荃湾', value: 4918.26 },
+              { name: '屯门', value: 5881.84 },
+              { name: '元朗', value: 4178.01 },
+              { name: '北区', value: 2227.92 },
+              { name: '大埔', value: 2180.98 },
+              { name: '沙田', value: 9172.94 },
+              { name: '西贡', value: 3368 },
+              { name: '离岛', value: 806.98 }
+            ],
+            // 自定义名称映射
+            nameMap: {
+              'Central and Western': '中西区',
+              'Eastern': '东区',
+              'Islands': '离岛',
+              'Kowloon City': '九龙城',
+              'Kwai Tsing': '葵青',
+              'Kwun Tong': '观塘',
+              'North': '北区',
+              'Sai Kung': '西贡',
+              'Sha Tin': '沙田',
+              'Sham Shui Po': '深水埗',
+              'Southern': '南区',
+              'Tai Po': '大埔',
+              'Tsuen Wan': '荃湾',
+              'Tuen Mun': '屯门',
+              'Wan Chai': '湾仔',
+              'Wong Tai Sin': '黄大仙',
+              'Yau Tsim Mong': '油尖旺',
+              'Yuen Long': '元朗'
+            }
+          }
+        ]
+      }
+    }
+
+      //   var option = {
+      //   // 光标移动显示的内容
+      //   tooltip: {
+      //     trigger: 'item',
+      //     formatter: '{a} <br/>{b}: {c} ({d}%)',
+      //   },
+      //   legend: {
+      //     type: 'scroll',
+      //     orient: 'horizontal', // 图例列表的布局朝向。 horizontal:横 vertical:纵
+      //     data: ['在线', '离线'],
+      //     bottom: 0,
+      //     // 修改图标大小
+      //     itemHeight: 8,
+      //     itemWidth: 8,
+      //     icon: 'circle',
+      //     textStyle: {
+      //       color: '#ADADB2',
+      //     },
+      //   },
+      //   // 在环形图中心显示文字
+      //   graphic: [
+      //     {
+      //       //环形图中间添加文字
+      //       type: 'text', //通过不同top值可以设置上下显示
+      //       left: 'center',
+      //       top: '50%',
+      //       style: {
+      //         text: '80%（自己设置显示内容）',
+      //         textAlign: 'center',
+      //         fill: '#ffffff', //文字的颜色
+      //         width: 30,
+      //         height: 30,
+      //         fontSize: 18,
+      //         color: '#ffffff',
+      //         fontFamily: 'Microsoft YaHei',
+      //       },
+      //     },
+      //   ],
+      //   series: [
+      //     {
+      //       name: '联网单位',
+      //       type: 'pie',
+      //       radius: ['40%', '55%'],
+      //       avoidLabelOverlap: false,
+      //       label: {
+      //         normal: {
+      //           textStyle: {
+      //             fontSize: 11,
+      //           },
+      //           show: true,
+      //           formatter: '{d}%',
+      //         },
+      //       },
+      //       data: [
+      //         {
+      //           value: 2402,
+      //           name: '在线',
+      //           itemStyle: {
+      //             color: '#5688EE',
+      //           },
+      //         },
+      //         {
+      //           value: 66,
+      //           name: '离线',
+      //           itemStyle: {
+      //             color: '#55CDA0',
+      //           },
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // }
+        // 指定图表的配置项和数据
+        // xAxis x轴显示的东西 yAxis y轴显示的东西 series：图标里面显示的内容 通过series的type属性来判断是什么类型的图表
+        // title 主标题文字设置 legend 当图例数量过多时，可用于过滤 只显示几个数据 grid 如果一个earchs 需要显示多个图表 那么使用他
+        //polar 极坐标系，可以用于散点图和折线图。每个极坐标系拥有一个角度轴和一个半径轴。
+        // radiusAxis 极坐标系的径向轴 angleAxis 极坐标系的角度轴。
+        // graphic 可在图标中加水印等数据
+        // 环形图中心显示文字
+        // var option = {
+        //     // 光标移动显示的内容
+        //     tooltip: {
+        //         trigger: 'item',
+        //         formatter: '{a} <br/>{b}: {c} ({d}%)'
+        //     },
+        //     legend: {
+        //         type: 'scroll',
+        //         orient: 'horizontal',// 图例列表的布局朝向。 horizontal:横 vertical:纵
+        //         // left: 10,
+        //         data: ['直接访问', '邮件营销'],
+        //         bottom: 10,
+        //         // top: 'bottom'
+        //     },
+        //     // 在环形图中心显示文字
+        //     graphic: {
+        //         type: 'text',
+        //         left: 'center',
+        //         top: 'center',
+        //         style: {
+        //             text: 'Part1\n   财务规划，绩效和控制\n  Financial Reporting ,\nPlanning,Performance\n and Control',
+        //             textAlign: 'center',
+        //             fill: '#000',
+        //             width: 30, 
+        //             height: 30
+        //         }
+        //     },
+        //     series: [
+        //         {
+        //             name: '访问来源',
+        //             type: 'pie',
+        //             radius: ['50%', '70%'],
+        //             avoidLabelOverlap: false,
+        //             label: {
+        //                 show: false,
+        //                 position: 'center'
+        //             }, 
+        //             emphasis: {
+        //                 label: {
+        //                     show: true,
+        //                     fontSize: '30',
+        //                     fontWeight: 'bold'
+        //                 }
+        //             },
+        //             labelLine: {
+        //                 show: false
+        //             },
+        //             data: [
+        //                 { value: 335, name: '直接访问' },
+        //                 { value: 310, name: '邮件营销' },
+        //                 { value: 234, name: '联盟广告' },
+        //                 { value: 135, name: '视频广告' },
+        //                 { value: 1548, name: '搜索引擎' }
+        //             ]
+        //         }
+        //     ]
+        // };
+
+        // 堆叠柱状图
+        // var option = {
+        //     tooltip: {
+        //         trigger: 'axis',
+        //         axisPointer: {
+        //             type: 'shadow'
+        //         }
+        //     },
+        //     legend: {
+        //         x: 'center',
+        //         y: 'bottom',
+        //         data: ['问题数', '解决数'],
+        //         // 修改图标大小
+        //         itemHeight: 8,
+        //         itemWidth: 8,
+        //         icon: 'rect' // 默认配置 circle 圆 rect 方 roundRect 圆方 triangle 三角 diamond arrow pin none
+        //     },
+        //     // grid 可用于设置图标到legend的边距
+        //     // grid: {
+        //     //     left: '3%',
+        //     //     right: '4%',
+        //     //     bottom: '10%',
+        //     //     containLabel: true
+        //     // },
+        //     xAxis: [
+        //         {
+        //             type: 'category',
+        //             data: ['1月', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+        //             axisLabel: {
+        //                 rotate: -30, // 字体角度
+        //             },
+        //             axisTick: {
+        //                 alignWithLabel:true //刻度对其柱状图的中间
+        //             }
+        //         }
+        //     ],
+        //     yAxis: [
+        //         {
+        //             type: 'value'
+        //         }
+        //     ],
+        //     series: [
+        //         {
+        //             name: '问题数',
+        //             type: 'bar',
+        //             stack: '巡查问题',
+        //             data: [12, 22, 33, 44, 55, 66, 66, 55, 44, 33, 22, 11],
+        //             itemStyle: {
+        //                 normal: {
+        //                     color: '#55CDA0'
+        //                 }
+        //             }
+        //         },
+        //         {
+        //             name: '解决数',
+        //             type: 'bar',
+        //             stack: '巡查问题',
+        //             data: [12, 22, 33, 44, 55, 66, 66, 55, 44, 33, 22, 11],
+        //             itemStyle: {
+        //                 normal: {
+        //                     color: '#5688EE'
+        //                 }
+        //             }
+        //         }
+        //     ]
+        // }
+
+        // 折线图
+        // var option = {
+        //     title: {
+        //         text: '堆叠区域图'
+        //     },
+        //     tooltip: {
+        //         trigger: 'axis',
+        //         axisPointer: {
+        //             type: 'cross',
+        //             label: {
+        //                 backgroundColor: '#6a7985'
+        //             }
+        //         }
+        //     },
+        //     legend: {
+        //         data: ['任务数', '执行数'],
+        //         x: 'center',
+        //         y: 'bottom',
+        //         // 修改图标大小
+        //         itemHeight: 8,
+        //         itemWidth: 8,
+        //         icon: 'rect' // 默认配置 circle 圆 rect 方 roundRect 圆方 triangle 三角 diamond arrow pin none
+        //     },
+        //     // 下载图片
+        //     // toolbox: {
+        //     //     feature: {
+        //     //         saveAsImage: {}
+        //     //     }
+        //     // },
+        //     grid: {
+        //         left: '3%',
+        //         right: '4%',
+        //         bottom: '3%',
+        //         containLabel: true
+        //     },
+        //     xAxis: [
+        //         {
+        //             type: 'category',
+        //             boundaryGap: false,
+        //             data: ['1月', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+        //             axisLabel: {
+        //                 rotate: -30, // 字体角度
+        //             }
+        //         }
+        //     ],
+        //     yAxis: [
+        //         {
+        //             type: 'value'
+        //         }
+        //     ],
+        //     series: [
+        //         {
+        //             showSymbol:false, // 默认不显示拐点
+        //             name: '任务数',
+        //             type: 'line',
+        //             stack: '巡查任务',
+        //             areaStyle: {},
+        //             data: [11, 22, 31, 44, 55, 66, 66, 55, 44, 31, 22, 11],
+        //             areaStyle: { // 区域填充样式
+        //                 normal: {
+        //                     color: '#253B7B' //改变区域颜色
+        //                 }
+        //             },
+        //         },
+        //         {
+        //             showSymbol:false,
+        //             name: '执行数',
+        //             type: 'line',
+        //             stack: '巡查任务',
+        //             areaStyle: {
+        //                 normal: {
+        //                     color: '#3A6E97' //改变区域颜色
+        //                 }
+        //             },
+        //             data: [11, 22, 31, 44, 55, 66, 66, 55, 44, 31, 22, 11],
+        //         }
+        //     ]
+        // }
+
+        // 正负条形图
+        // var option = {
+        //     tooltip: {
+        //         trigger: 'axis',
+        //         axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+        //             type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+        //         },
+        //         formatter: function(params){
+        //             return `${params[0].axisValue} </br> 
+        //             ${params[0].marker} ${params[0].seriesName} : ${Math.abs(params[0].value)} </br>
+        //             ${params[1].marker} ${params[1].seriesName} : ${Math.abs(params[1].value)}`;
+        //         }
+        //     },
+        //     legend: {
+        //         x: 'center',
+        //         y: 'bottom',
+        //         data: ['在岗', '离岗'],
+        //         // 修改图标大小
+        //         itemHeight: 8,
+        //         itemWidth: 8,
+        //         icon: 'rect' // 默认配置 circle 圆 rect 方 roundRect 圆方 triangle 三角 diamond arrow pin none
+        //     },
+        //     // grid: {
+        //     //     left: '3%',
+        //     //     right: '4%',
+        //     //     bottom: '3%',
+        //     //     containLabel: true
+        //     // },
+        //     xAxis: [
+        //         {
+        //             type: 'value',
+        //             axisLabel: {
+        //                 formatter: function (params) {
+        //                     return Math.abs(params)
+        //                 }
+        //             }
+        //         }
+        //     ],
+        //     yAxis: [
+        //         {
+        //             type: 'category',
+        //             axisTick: {
+        //                 show: false
+        //             },
+        //             data: ['06/06', '06/05', '06/04', '06/03', '06/02', '06/01', '05/31']
+        //         }
+        //     ],
+        //     series: [
+        //         {
+        //             name: '在岗',
+        //             type: 'bar',
+        //             stack: '值班查岗',
+        //             label: {
+        //                 show: true,
+        //                 position: 'right'
+        //             },
+        //             data: [17, 15.2, 11.9, 8.5, 5.7, 4.2, 3.9],
+        //             itemStyle: {
+        //                 normal: {
+        //                     color: '#55CDA0' //改变区域颜色
+        //                 }
+        //             }
+        //         },
+        //         {
+        //             name: '离岗',
+        //             type: 'bar',
+        //             stack: '值班查岗',
+        //             label: {  //图表显示数值做处理
+        //                 normal: {
+        //                     show: false,
+        //                     formatter: function (params) { return Math.abs(params.value) }  //返回绝对值
+        //                 }
+        //             },
+        //             data: [-25.2, -21.5, -18.4, -14.5, -9.5, -6.9, -7],
+        //             itemStyle: {
+        //                 normal: {
+        //                     color: '#5688EE' //改变区域颜色
+        //                 }
+        //             }
+        //         }
+        //     ]
+        // };
+
+        // // 创建一个file input
+        // let input = document.createElement('input')
+        // input.type = 'file'
+
+        // // 绑定onchange事件
+        // input.onchange = (event) => {
+        //     let files = event.target.files
+        //     if (!files || !files.length) {
+        //         input = null
+        //         throw new Error('No files')
+        //     }
+
+        //     // 当选择文件后，使用FileReader API读取文件，返回数据
+        //     let reader = new FileReader()
+        //     reader.onload = (event) => {
+        //         try {
+        //             let config = JSON.parse(event.target.result)
+        //             return config
+        //         } catch (e) {
+        //             throw new Error(e)
+        //         }
+        //         input = null
+        //     }
+        //     reader.readAsText(files[0])
+        // }
+
+        // // 触发上传文件
+        // input.click()
+
+  </script>
+</body>
+
+</html>

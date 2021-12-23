@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>位置经纬度 + 驾车规划路线</title>
+    <style type="text/css">
+    html,
+    body,
+    #container {
+      width: 100%;
+      height: 100%;
+    }
+    </style>
+    <style type="text/css">
+        #panel {
+            position: fixed;
+            background-color: white;
+            max-height: 90%;
+            overflow-y: auto;
+            top: 10px;
+            right: 10px;
+            width: 280px;
+        }
+        #panel .amap-call {
+            background-color: #009cf9;
+            border-top-left-radius: 4px;
+   	        border-top-right-radius: 4px;
+        }
+        #panel .amap-lib-driving {
+	        border-bottom-left-radius: 4px;
+   	        border-bottom-right-radius: 4px;
+            overflow: hidden;
+        }
+    </style>
+    <link href="https://cdn.bootcdn.net/ajax/libs/leaflet/1.6.0/leaflet.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+
+   integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+
+   crossorigin=""></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=79b4198dee673b0548c279af1c7905d5&plugin=AMap.Driving"></script>
+    <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- <script src="../js/util/LayerChinaProvider.js"></script> -->
+</head>
+<body>
+    <div id="container" style="width: 500px; height: 300px"></div>
+<div id="map" style="width: 2400px;height: 1200px;"></div>
+<div id="panel"></div>
+<script type="text/javascript">
+    // var map = L.map('map').setView([23.1473348184999, 113.26034724712373], 18);
+    // L.tileLayer.chinaProvider('GaoDe.Normal.Map', {
+    //         maxZoom: 18,
+    //         minZoom: 5
+    //       }).addTo(map)
+    // map.on('click',function(result){
+    //     console.info(result)
+    // })
+    // var tileLayer = L.tileLayer.chinaProvider('GaoDe.Normal.Map', { maxZoom: 18, minZoom: 5 }).addTo(map)
+    //基本地图加载
+    var map = new AMap.Map("container", {
+        resizeEnable: true,
+        center: [113.30378859266636, 23.12770860230083],//地图中心点
+        zoom: 20,
+        dragEnable: false,
+        zoomEnable: false
+    });
+
+    map.on('click',function(e) {
+        console.log(e)
+    })
+    
+    map.add(new AMap.Marker({
+        position: [113.30378859266636, 23.12770860230083]
+    }))
+    // //构造路线导航类
+    // var driving = new AMap.Driving({
+    //     map: map,
+    //     panel: "panel"
+    // }); 
+    // // 根据起终点经纬度规划驾车导航路线
+    // driving.search(new AMap.LngLat(116.379028, 39.865042), new AMap.LngLat(116.427281, 39.903719), function(status, result) {
+    //     // result 即是对应的驾车导航信息，相关数据结构文档请参考  https://lbs.amap.com/api/javascript-api/reference/route-search#m_DrivingResult
+    //     if (status === 'complete') {
+    //         console.info(result)
+    //         log.success('绘制驾车路线完成')
+    //     } else {
+    //         log.error('获取驾车数据失败：' + result)
+    //     }
+    // });
+    // var latlngs = [
+    //     [23.14734468363269, 113.25952649116518],
+    //     [23.1475271884584, 113.25986444950105],
+    //     [23.14705366190998, 113.26174199581148]
+    // ];
+    // for(let i = 0;i<latlngs.length;i++){
+    //     this.map.openPopup(
+    //         i,
+    //         latlngs[i].reverse(),
+    //         {
+    //         offset: [0, -8]
+    //         }
+    //     )
+    // }
+    // L.polyline(latlngs, {noClip: true}).addTo(map)
+    // axios.get(`https://restapi.amap.com/v3/direction/driving?origin=113.257310,23.149199&destination=113.260347,23.147334&extensions=all&output=json&key=27964c3560e99b64a2611960af34445d`)
+    // .then(result => {
+    //     console.info(result.data)
+    //     let steps = result.data.route.paths[0].steps
+    //     console.info(steps)
+    //     let latlngs = getLatLngs(steps,0);
+    //     console.info(latlngs)
+    //     L.polyline(latlngs,{color: 'yellow'}).addTo(map)
+    // })
+    // function getLatLngs(steps,index,latlngs = []){
+    //     let step = steps[index]
+    //     if (!step) return latlngs;
+    //     let polyline = step.polyline;
+    //     let stepLatlngs = polyline.split(';');
+    //     latlngs[index] = []
+    //     for(let i = 0;i<stepLatlngs.length;i++){
+    //         let stepLatlng = stepLatlngs[i].split(',');
+    //         latlngs[index].push([stepLatlng[1], stepLatlng[0]])
+    //         // latlngs.push(stepLatlng)
+    //     }
+    //     return getLatLngs(steps,++index,latlngs)
+    // }
+    // 起点 广州市贤良商务中心
+    function Rad(d){
+       return d * Math.PI / 180.0;//经纬度转换成三角函数中度分表形式。
+    }
+    //计算距离，参数分别为第一点的纬度，经度；第二点的纬度，经度
+    function GetDistance(lat1,lng1,lat2,lng2){
+ 
+        var radLat1 = Rad(lat1);
+        var radLat2 = Rad(lat2);
+        var a = radLat1 - radLat2;
+        var  b = Rad(lng1) - Rad(lng2);
+        var s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a/2),2) +
+        Math.cos(radLat1)*Math.cos(radLat2)*Math.pow(Math.sin(b/2),2)));
+        s = s *6378.137 ;// EARTH_RADIUS;
+        s = Math.round(s * 10000) / 10000; //输出为公里
+        //s=s.toFixed(4);
+        return s;
+    }
+    let xdf = [22.881196, 113.416800] // 1.1896 新东方
+    xdf = [22.862691, 113.430147] // 3.376 小乌公园
+    xdf = [22.886811, 113.401951] // 0.5829 标准工业园
+
+    const mi = GetDistance(22.882580, 113.405299, ...xdf)
+    console.info(mi)
+</script>
+</body>
+</html>
